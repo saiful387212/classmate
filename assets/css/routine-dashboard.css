@@ -1,0 +1,458 @@
+.routine-schedule-card .card-header,
+.routine-card-actions {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.tomorrow-routine-card {
+    overflow: hidden;
+    border: 1px solid #d9e3f0;
+    border-radius: 18px;
+    box-shadow: 0 12px 30px rgba(24, 45, 80, 0.09);
+}
+
+.tomorrow-routine-card .card-header {
+    display: block;
+    padding: 22px 24px 18px;
+    border: 0;
+    background: linear-gradient(115deg, #18385f 0%, #213e68 100%);
+    color: #fff;
+}
+
+.routine-header-main {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+}
+
+.routine-card-heading {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 0;
+}
+
+.routine-heading-icon {
+    display: grid;
+    width: 44px;
+    height: 44px;
+    flex: 0 0 44px;
+    place-items: center;
+    border-radius: 13px;
+    background: transparent;
+    color: #5eead4;
+    font-size: 35px;
+}
+
+.routine-card-heading .card-title {
+    margin: 0;
+    color: #fff;
+    font-size: clamp(1.25rem, 3vw, 1.75rem);
+    font-weight: 700;
+}
+
+.routine-card-heading .card-title span {
+    color: #5eead4;
+}
+
+.routine-card-heading p {
+    margin: 5px 0 0;
+    color: #cbd9eb;
+    font-size: 0.95rem;
+}
+
+.routine-header-calendar {
+    color: #fff;
+    font-size: 32px;
+}
+
+.tomorrow-routine-card .routine-card-actions {
+    justify-content: space-between;
+    margin-top: 18px;
+    padding-top: 14px;
+    border-top: 1px solid rgba(255, 255, 255, 0.18);
+}
+
+.routine-class-list {
+    display: grid;
+    gap: 12px;
+}
+
+.tomorrow-routine-card .card-body {
+    display: grid;
+    gap: 16px;
+    padding: 20px;
+    background: #f3f6fb;
+}
+
+.routine-card-actions {
+    flex-wrap: nowrap;
+}
+
+.routine-class-count {
+    padding: 6px 10px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.12);
+    color: #e7f0ff;
+    font-size: 0.78rem;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+#download-tomorrow-routine {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-height: 40px;
+    padding: 8px 12px;
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    border-radius: 10px;
+    background: #fff;
+    color: #18385f;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+#download-tomorrow-routine:hover {
+    border-color: #5eead4;
+    background: #e8fffb;
+}
+
+.routine-class-item {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 14px;
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    background: var(--bg-white);
+}
+
+.routine-class-content {
+    min-width: 0;
+}
+
+.routine-class-content h4 {
+    margin: 0 0 8px;
+}
+
+.routine-class-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 16px;
+    color: var(--text-muted);
+    font-size: var(--font-size-sm);
+}
+
+.routine-class-meta i {
+    margin-right: 4px;
+}
+
+.routine-status {
+    flex: 0 0 auto;
+    padding: 5px 10px;
+    border-radius: 999px;
+    font-size: var(--font-size-xs);
+    font-weight: 600;
+}
+
+.routine-status-scheduled {
+    color: #3730a3;
+    background: #e0e7ff;
+}
+
+.routine-status-live {
+    color: #065f46;
+    background: #d1fae5;
+}
+
+.routine-status-completed {
+    color: #374151;
+    background: #e5e7eb;
+}
+
+.routine-status-cancelled {
+    color: #991b1b;
+    background: #fee2e2;
+}
+
+.tomorrow-routine-card .routine-class-item {
+    position: relative;
+    display: block;
+    padding: 20px 20px 18px 24px;
+    border: 1px solid #e4eaf2;
+    border-left: 5px solid #19a88a;
+    border-radius: 15px;
+    background: #fff;
+    box-shadow: 0 7px 18px rgba(35, 57, 86, 0.07);
+    transition: border-color 160ms ease, box-shadow 160ms ease, transform 160ms ease;
+}
+
+.tomorrow-routine-card .routine-class-item:hover {
+    transform: translateY(-1px);
+    border-color: #c7d2fe;
+    box-shadow: 0 5px 16px rgba(30, 41, 59, 0.06);
+}
+
+.tomorrow-routine-card .routine-class-content h4 {
+    margin: 0;
+    color: #18385f;
+    font-size: 1.16rem;
+    font-weight: 750;
+    line-height: 1.35;
+}
+
+.routine-class-heading {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    min-width: 0;
+}
+
+.routine-course-icon {
+    display: grid;
+    width: 58px;
+    height: 58px;
+    flex: 0 0 58px;
+    place-items: center;
+    border-radius: 50%;
+    background: #dcf7f2;
+    color: #187c83;
+    font-size: 25px;
+}
+
+.routine-title-group {
+    min-width: 0;
+    flex: 1;
+}
+
+.tomorrow-routine-card .routine-title-group p {
+    margin: 4px 0 0;
+    color: #718198;
+    font-size: 0.96rem;
+    line-height: 1.4;
+}
+
+.tomorrow-routine-card .routine-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-left: auto;
+    padding: 8px 12px;
+    font-size: 0.82rem;
+    white-space: nowrap;
+}
+
+.routine-class-details {
+    display: grid;
+    grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+    gap: 12px;
+    margin: 18px 0 15px;
+    padding: 14px 16px;
+    border-radius: 12px;
+    background: #f2f6fc;
+}
+
+.routine-detail {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    min-width: 0;
+}
+
+.routine-detail > i {
+    flex: 0 0 auto;
+    color: #2776b8;
+    font-size: 21px;
+}
+
+.routine-detail div {
+    display: grid;
+    gap: 3px;
+    min-width: 0;
+}
+
+.routine-detail span {
+    color: #718198;
+    font-size: 0.82rem;
+}
+
+.routine-detail strong {
+    color: #1e3555;
+    font-size: 0.98rem;
+    overflow-wrap: anywhere;
+}
+
+.routine-detail-time {
+    padding-left: 18px;
+    border-left: 1px solid #d6e0ed;
+}
+
+.routine-detail-time > i {
+    color: #2477bd;
+    font-size: 24px;
+}
+
+.routine-detail-time strong {
+    color: #153557;
+    font-size: 1.04rem;
+    letter-spacing: 0.01em;
+}
+
+.routine-class-footer {
+    display: grid;
+    grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+    gap: 12px;
+    padding: 0 4px;
+}
+
+.routine-detail-room {
+    padding-right: 14px;
+    border-right: 1px solid #e0e7f0;
+}
+
+.routine-detail-room > i {
+    color: #199b88;
+}
+
+.routine-detail-teacher > i {
+    color: #5143bd;
+}
+
+@media (max-width: 600px) {
+    .tomorrow-routine-card .card-header {
+        padding: 18px 16px 14px;
+    }
+
+    .routine-card-heading {
+        align-items: flex-start;
+    }
+
+    .routine-heading-icon {
+        width: 38px;
+        height: 38px;
+        flex-basis: 38px;
+        font-size: 29px;
+    }
+
+    .routine-card-heading .card-title {
+        font-size: 1.2rem;
+    }
+
+    .routine-card-heading p {
+        font-size: 0.82rem;
+    }
+
+    .routine-header-calendar {
+        font-size: 26px;
+    }
+
+    .tomorrow-routine-card .routine-card-actions {
+        margin-top: 14px;
+        padding-top: 12px;
+    }
+
+    #download-tomorrow-routine {
+        min-height: 38px;
+        padding: 7px 10px;
+        font-size: 0.82rem;
+    }
+
+    .tomorrow-routine-card .card-body {
+        gap: 12px;
+        padding: 13px;
+    }
+
+    .tomorrow-routine-card .routine-class-item {
+        padding: 15px 13px 14px 15px;
+    }
+
+    .tomorrow-routine-card .routine-class-content h4 {
+        font-size: 0.98rem;
+    }
+
+    .routine-class-heading {
+        align-items: flex-start;
+        gap: 10px;
+    }
+
+    .routine-course-icon {
+        width: 43px;
+        height: 43px;
+        flex-basis: 43px;
+        font-size: 19px;
+    }
+
+    .tomorrow-routine-card .routine-status {
+        gap: 4px;
+        padding: 6px 8px;
+        font-size: 0.7rem;
+    }
+
+    .routine-class-details,
+    .routine-class-footer {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 10px;
+    }
+
+    .routine-class-details {
+        margin: 14px 0 12px;
+        padding: 12px;
+    }
+
+    .routine-detail-time {
+        padding: 10px 0 0;
+        border-top: 1px solid #d6e0ed;
+        border-left: 0;
+    }
+
+    .routine-class-footer {
+        padding: 0 2px;
+    }
+
+    .routine-detail-room {
+        padding: 0 0 10px;
+        border-right: 0;
+        border-bottom: 1px solid #e0e7f0;
+    }
+
+    .routine-detail strong,
+    .routine-detail-time strong {
+        font-size: 0.9rem;
+    }
+}
+
+@media (max-width: 360px) {
+    .routine-class-count {
+        padding: 6px 8px;
+        font-size: 0.72rem;
+    }
+
+    #download-tomorrow-routine {
+        gap: 6px;
+        padding: 7px 9px;
+        font-size: 0.78rem;
+    }
+
+    .routine-header-calendar {
+        display: none;
+    }
+
+    .routine-class-heading {
+        flex-wrap: wrap;
+    }
+
+    .tomorrow-routine-card .routine-status {
+        margin-left: 53px;
+    }
+
+    .tomorrow-routine-card .routine-status {
+        align-self: flex-start;
+    }
+}

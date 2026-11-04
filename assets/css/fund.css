@@ -1,0 +1,300 @@
+/* ============================================
+   CLASSMATE - Fund Management CSS
+   ============================================ */
+
+/* Fund Stats */
+.fund-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: var(--spacing-md);
+    margin-bottom: var(--spacing-lg);
+}
+
+.fund-stats-grid .stat-card {
+    padding: var(--spacing-md) var(--spacing-lg);
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+}
+
+.fund-stats-grid .stat-card .stat-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+}
+
+.stat-income .stat-icon { background: var(--success-light); color: var(--success); }
+.stat-expenditure .stat-icon { background: var(--danger-light); color: var(--danger); }
+.stat-refund .stat-icon { background: var(--warning-light); color: var(--warning); }
+.stat-balance .stat-icon { background: var(--primary-bg); color: var(--primary); }
+
+.fund-stats-grid .stat-card .stat-info h3 {
+    font-size: var(--font-size-xl);
+    margin: 0;
+    line-height: 1.2;
+}
+
+.fund-stats-grid .stat-card .stat-info p {
+    font-size: var(--font-size-xs);
+    color: var(--text-muted);
+    margin: 0;
+}
+
+/* Transaction Table */
+.transaction-table .transaction-income {
+    border-left: 3px solid var(--success);
+}
+
+.transaction-table .transaction-expenditure {
+    border-left: 3px solid var(--danger);
+}
+
+.transaction-table .transaction-refund {
+    border-left: 3px solid var(--warning);
+}
+
+.transaction-table .amount-income {
+    color: var(--success);
+    font-weight: 600;
+}
+
+.transaction-table .amount-expenditure {
+    color: var(--danger);
+    font-weight: 600;
+}
+
+.transaction-table .amount-refund {
+    color: var(--warning);
+    font-weight: 600;
+}
+
+/* Badge styles for transaction types */
+.badge-income {
+    background: var(--success-light);
+    color: var(--success);
+}
+
+.badge-expenditure {
+    background: var(--danger-light);
+    color: var(--danger);
+}
+
+.badge-refund {
+    background: var(--warning-light);
+    color: var(--warning);
+}
+
+/* Transaction Filters */
+.transaction-filters {
+    margin-bottom: var(--spacing-lg);
+}
+
+/* Empty State Actions */
+.empty-actions {
+    display: flex;
+    gap: var(--spacing-md);
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-top: var(--spacing-md);
+}
+
+/* Delete Modal */
+.delete-warning {
+    text-align: center;
+    padding: var(--spacing-md);
+}
+
+.delete-warning i {
+    font-size: 3rem;
+    margin-bottom: var(--spacing-md);
+}
+
+.delete-warning .transaction-details {
+    background: var(--gray-50);
+    padding: var(--spacing-md);
+    border-radius: var(--border-radius);
+    margin: var(--spacing-md) 0;
+}
+
+.delete-warning .transaction-details .amount {
+    display: block;
+    font-size: var(--font-size-xl);
+    font-weight: 700;
+    color: var(--danger);
+    margin-top: var(--spacing-xs);
+}
+
+/* Fund Classes Grid (Student) */
+.fund-classes-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: var(--spacing-lg);
+}
+
+.fund-class-card {
+    background: var(--bg-white);
+    border-radius: var(--border-radius);
+    border: 1px solid var(--border-color);
+    overflow: hidden;
+    transition: var(--transition);
+}
+
+.fund-class-card:hover {
+    box-shadow: var(--shadow-md);
+    transform: translateY(-2px);
+}
+
+.fund-class-card .fund-class-header {
+    padding: var(--spacing-md) var(--spacing-lg);
+    background: var(--gray-50);
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.fund-class-card .fund-class-header h3 {
+    font-size: var(--font-size-base);
+    margin: 0;
+}
+
+.fund-class-card .fund-class-header .class-code {
+    font-size: var(--font-size-xs);
+    color: var(--text-muted);
+}
+
+.fund-class-card .fund-class-body {
+    padding: var(--spacing-md) var(--spacing-lg);
+}
+
+.fund-details-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--spacing-md);
+    margin-bottom: var(--spacing-md);
+}
+
+.fund-detail {
+    text-align: center;
+}
+
+.fund-detail .label {
+    display: block;
+    font-size: var(--font-size-xs);
+    color: var(--text-muted);
+}
+
+.fund-detail .value {
+    display: block;
+    font-size: var(--font-size-base);
+    font-weight: 600;
+}
+
+.fund-detail .value.balance { color: var(--primary); }
+.fund-detail .value.income { color: var(--success); }
+.fund-detail .value.expenditure { color: var(--danger); }
+.fund-detail .value.refund { color: var(--warning); }
+
+.fund-progress {
+    margin-bottom: var(--spacing-md);
+}
+
+.fund-progress .progress-label {
+    display: flex;
+    justify-content: space-between;
+    font-size: var(--font-size-xs);
+    color: var(--text-muted);
+    margin-bottom: var(--spacing-xs);
+}
+
+.fund-meta {
+    display: flex;
+    gap: var(--spacing-md);
+    font-size: var(--font-size-xs);
+    color: var(--text-muted);
+    padding-top: var(--spacing-sm);
+    border-top: 1px solid var(--border-color);
+}
+
+.fund-meta i {
+    margin-right: var(--spacing-xs);
+}
+
+/* Info Box */
+.info-box {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--spacing-md);
+    padding: var(--spacing-lg);
+    background: var(--primary-bg);
+    border-radius: var(--border-radius);
+    border: 1px solid var(--primary-light);
+    margin-top: var(--spacing-lg);
+}
+
+.info-box i {
+    font-size: 1.5rem;
+    color: var(--primary);
+    margin-top: 2px;
+}
+
+.info-box h4 {
+    margin: 0 0 var(--spacing-xs) 0;
+    color: var(--text-primary);
+}
+
+.info-box p {
+    margin: 0;
+    color: var(--text-secondary);
+    font-size: var(--font-size-sm);
+}
+
+/* Student Fund Stats */
+.fund-stats-grid.student .stat-card {
+    cursor: default;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .fund-stats-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+    
+    .fund-classes-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .transaction-filters .filter-row {
+        flex-direction: column;
+    }
+    
+    .transaction-filters .filter-group {
+        width: 100%;
+    }
+    
+    .fund-details-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+    
+    .empty-actions {
+        flex-direction: column;
+    }
+    
+    .empty-actions .btn {
+        width: 100%;
+    }
+}
+
+@media (max-width: 425px) {
+    .fund-stats-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .fund-details-grid {
+        grid-template-columns: 1fr;
+    }
+}

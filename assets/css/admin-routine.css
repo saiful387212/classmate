@@ -1,0 +1,31 @@
+.routine-status-form {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    min-width: 290px;
+    margin-bottom: 8px;
+}
+
+.routine-status-form input,
+.routine-status-form select {
+    min-width: 0;
+    padding: 6px;
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    background: var(--bg-white);
+}
+
+.routine-status-form input[type="date"] {
+    width: 140px;
+}
+
+.routine-status-form select {
+    width: 105px;
+}
+
+@media (max-width: 700px) {
+    .routine-status-form {
+        min-width: 0;
+        flex-wrap: wrap;
+    }
+}

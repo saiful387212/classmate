@@ -1,0 +1,202 @@
+/* ============================================
+   CLASSMATE - Activity Logs CSS
+   ============================================ */
+
+/* ===== Log Stats ===== */
+.log-stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--spacing-md);
+    margin-bottom: var(--spacing-lg);
+}
+
+.log-stats .stat-item {
+    background: var(--bg-white);
+    padding: var(--spacing-md);
+    border-radius: var(--border-radius);
+    border: 1px solid var(--border-color);
+    text-align: center;
+}
+
+.log-stats .stat-item .stat-value {
+    display: block;
+    font-size: var(--font-size-2xl);
+    font-weight: 700;
+    color: var(--primary);
+}
+
+.log-stats .stat-item .stat-label {
+    display: block;
+    font-size: var(--font-size-xs);
+    color: var(--text-muted);
+    margin-top: var(--spacing-xs);
+}
+
+/* ===== Activity Summary ===== */
+.activity-summary {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--spacing-lg);
+    margin-bottom: var(--spacing-lg);
+}
+
+.activity-summary .summary-section {
+    background: var(--bg-white);
+    border-radius: var(--border-radius);
+    border: 1px solid var(--border-color);
+    padding: var(--spacing-md) var(--spacing-lg);
+}
+
+.activity-summary .summary-section h4 {
+    font-size: var(--font-size-sm);
+    margin-bottom: var(--spacing-md);
+    color: var(--text-secondary);
+}
+
+.top-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+}
+
+.top-item {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    font-size: var(--font-size-sm);
+}
+
+.top-item .top-label {
+    flex: 1;
+    color: var(--text-secondary);
+}
+
+.top-item .top-count {
+    font-weight: 600;
+    min-width: 30px;
+    text-align: right;
+}
+
+.top-item .top-bar {
+    flex: 2;
+    height: 6px;
+    background: var(--gray-200);
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+.top-item .top-bar .top-bar-fill {
+    height: 100%;
+    border-radius: 3px;
+    background: var(--primary);
+    transition: width 0.6s ease;
+}
+
+/* ===== User Info in Table ===== */
+.user-info {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-xs);
+}
+
+.user-info .user-name {
+    font-weight: 500;
+}
+
+.user-info .user-type {
+    font-size: var(--font-size-xs);
+    align-self: flex-start;
+}
+
+/* ===== Badge Colors for Actions ===== */
+.badge-login { background: var(--primary-bg); color: var(--primary); }
+.badge-logout { background: var(--gray-200); color: var(--gray-600); }
+.badge-create { background: var(--success-light); color: var(--success); }
+.badge-update { background: var(--info-light); color: var(--info); }
+.badge-delete { background: var(--danger-light); color: var(--danger); }
+.badge-view { background: var(--gray-200); color: var(--gray-600); }
+.badge-approve { background: var(--success-light); color: var(--success); }
+.badge-reject { background: var(--danger-light); color: var(--danger); }
+.badge-reset { background: var(--warning-light); color: var(--warning); }
+.badge-upload { background: var(--primary-bg); color: var(--primary); }
+.badge-download { background: var(--info-light); color: var(--info); }
+.badge-status_change { background: var(--warning-light); color: var(--warning); }
+.badge-unknown { background: var(--gray-200); color: var(--gray-600); }
+
+/* ===== Description in Table ===== */
+.description {
+    font-size: var(--font-size-sm);
+}
+
+.description .record-id {
+    display: inline-block;
+    font-size: var(--font-size-xs);
+    color: var(--text-muted);
+    background: var(--gray-100);
+    padding: 1px 6px;
+    border-radius: 3px;
+    margin-left: var(--spacing-xs);
+}
+
+/* ===== Timestamp ===== */
+.timestamp .date {
+    display: block;
+    font-size: var(--font-size-sm);
+}
+
+.timestamp .time {
+    display: block;
+    font-size: var(--font-size-xs);
+    color: var(--text-muted);
+}
+
+/* ===== IP Address ===== */
+.ip-address {
+    font-size: var(--font-size-xs);
+    background: var(--gray-100);
+    padding: 2px 6px;
+    border-radius: 3px;
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 1024px) {
+    .log-stats {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .activity-summary {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 768px) {
+    .log-stats {
+        grid-template-columns: 1fr 1fr;
+    }
+    
+    .log-stats .stat-item .stat-value {
+        font-size: var(--font-size-xl);
+    }
+    
+    .user-info {
+        flex-direction: row;
+        align-items: center;
+        gap: var(--spacing-xs);
+    }
+    
+    .user-info .user-type {
+        align-self: center;
+    }
+}
+
+@media (max-width: 425px) {
+    .log-stats {
+        grid-template-columns: 1fr;
+    }
+    
+    .description .record-id {
+        display: block;
+        margin-left: 0;
+        margin-top: var(--spacing-xs);
+    }
+}

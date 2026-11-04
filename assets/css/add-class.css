@@ -1,0 +1,90 @@
+/* ============================================
+   CLASSMATE - Add Class CSS
+   ============================================ */
+
+/* ===== Form Sections ===== */
+.form-section {
+    background: var(--bg-white);
+    border-radius: var(--border-radius);
+    border: 1px solid var(--border-color);
+    margin-bottom: var(--spacing-lg);
+    overflow: hidden;
+}
+
+.form-section .form-section-title {
+    padding: var(--spacing-md) var(--spacing-lg);
+    margin: 0;
+    background: var(--gray-50);
+    border-bottom: 1px solid var(--border-color);
+    font-size: var(--font-size-base);
+    font-weight: 600;
+    color: var(--text-primary);
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+}
+
+.form-section .form-section-title i {
+    color: var(--primary);
+}
+
+/* ===== Course Form Wrapper ===== */
+.course-form-wrapper {
+    margin-top: var(--spacing-md);
+    padding: var(--spacing-lg);
+    background: var(--gray-50);
+    border-radius: var(--border-radius);
+    border: 2px dashed var(--border-color);
+}
+
+.course-form-wrapper .course-form-inner h5 {
+    margin: 0 0 var(--spacing-xs) 0;
+    color: var(--text-primary);
+}
+
+.course-form-wrapper .course-form-inner .text-muted {
+    margin-bottom: var(--spacing-md);
+}
+
+/* ===== Form Actions ===== */
+.form-actions {
+    display: flex;
+    gap: var(--spacing-md);
+    margin-top: var(--spacing-lg);
+    padding-top: var(--spacing-lg);
+    border-top: 1px solid var(--border-color);
+}
+
+/* ============================================
+   RESPONSIVE
+   ============================================ */
+
+@media (max-width: 768px) {
+    .form-section .form-section-title {
+        padding: var(--spacing-sm) var(--spacing-md);
+        font-size: var(--font-size-sm);
+    }
+    
+    .course-form-wrapper {
+        padding: var(--spacing-md);
+    }
+    
+    .form-actions {
+        flex-direction: column;
+    }
+    
+    .form-actions .btn {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
+@media (max-width: 425px) {
+    .form-row {
+        flex-direction: column;
+    }
+    
+    .form-row .form-group {
+        width: 100%;
+    }
+}

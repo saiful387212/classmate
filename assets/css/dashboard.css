@@ -1,0 +1,370 @@
+/* ============================================
+   CLASSMATE - Admin Dashboard CSS
+   ============================================ */
+
+/* ===== Welcome Banner ===== */
+.dashboard-welcome {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+    border-radius: var(--border-radius-lg);
+    padding: var(--spacing-lg) var(--spacing-xl);
+    margin-bottom: var(--spacing-lg);
+    color: white;
+}
+
+.dashboard-welcome .welcome-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: var(--spacing-md);
+}
+
+.dashboard-welcome h1 {
+    color: white;
+    font-size: var(--font-size-2xl);
+    margin-bottom: var(--spacing-xs);
+}
+
+.dashboard-welcome .text-muted {
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.dashboard-welcome .welcome-date {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    background: rgba(255, 255, 255, 0.15);
+    padding: var(--spacing-sm) var(--spacing-lg);
+    border-radius: 20px;
+    backdrop-filter: blur(10px);
+    font-size: var(--font-size-sm);
+}
+
+.dashboard-welcome .welcome-date i {
+    color: rgba(255, 255, 255, 0.8);
+}
+
+/* ===== Quick Stats ===== */
+.quick-stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--spacing-md);
+    margin-bottom: var(--spacing-lg);
+}
+
+.quick-stats .stat-card {
+    padding: var(--spacing-lg);
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+}
+
+.quick-stats .stat-card .stat-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: var(--border-radius);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.4rem;
+}
+
+.stat-classes .stat-icon { background: var(--primary-bg); color: var(--primary); }
+.stat-assignments .stat-icon { background: var(--warning-light); color: var(--warning); }
+.stat-students .stat-icon { background: var(--success-light); color: var(--success); }
+.stat-funds .stat-icon { background: var(--info-light); color: var(--info); }
+
+.quick-stats .stat-card .stat-info {
+    flex: 1;
+}
+
+.quick-stats .stat-card .stat-info h3 {
+    font-size: var(--font-size-2xl);
+    margin: 0;
+    line-height: 1.2;
+}
+
+.quick-stats .stat-card .stat-info p {
+    margin: 0;
+    color: var(--text-muted);
+    font-size: var(--font-size-sm);
+}
+
+.quick-stats .stat-card .stat-change {
+    font-size: var(--font-size-xs);
+}
+
+/* ===== Dashboard Grid ===== */
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--spacing-lg);
+    margin-bottom: var(--spacing-lg);
+}
+
+.dashboard-column {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-lg);
+}
+
+/* ===== Chart Containers ===== */
+.chart-container {
+    position: relative;
+    max-width: 100%;
+    margin: 0 auto;
+}
+
+.chart-container.chart-pie {
+    max-width: 250px;
+    margin: 0 auto var(--spacing-md);
+}
+
+.chart-container.chart-bar {
+    max-width: 100%;
+    min-height: 200px;
+}
+
+/* ===== Chart Legends ===== */
+.chart-legend {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--spacing-xs) var(--spacing-md);
+    padding: var(--spacing-sm);
+    background: var(--gray-50);
+    border-radius: var(--border-radius);
+}
+
+.chart-legend .legend-item {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    font-size: var(--font-size-sm);
+    color: var(--text-secondary);
+}
+
+.chart-legend .color-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+/* ===== Activity Timeline ===== */
+.activity-timeline {
+    max-height: 500px;
+    overflow-y: auto;
+}
+
+.activity-item {
+    display: flex;
+    gap: var(--spacing-md);
+    padding: var(--spacing-md) 0;
+    border-bottom: 1px solid var(--gray-100);
+}
+
+.activity-item:last-child {
+    border-bottom: none;
+}
+
+.activity-item .activity-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.activity-item .activity-content {
+    flex: 1;
+    min-width: 0;
+}
+
+.activity-item .activity-header {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    flex-wrap: wrap;
+    margin-bottom: var(--spacing-xs);
+}
+
+.activity-item .activity-type {
+    font-size: var(--font-size-xs);
+}
+
+.activity-item .activity-time {
+    font-size: var(--font-size-xs);
+    color: var(--text-muted);
+}
+
+.activity-item .activity-title {
+    font-size: var(--font-size-sm);
+    font-weight: 500;
+}
+
+.activity-item .activity-title a {
+    color: var(--text-primary);
+    text-decoration: none;
+}
+
+.activity-item .activity-title a:hover {
+    color: var(--primary);
+}
+
+.activity-item .activity-detail {
+    margin-top: var(--spacing-xs);
+    color: var(--text-muted);
+    font-size: var(--font-size-sm);
+}
+
+.activity-footer {
+    padding-top: var(--spacing-md);
+    border-top: 1px solid var(--border-color);
+    text-align: center;
+}
+
+/* ===== Quick Actions ===== */
+.quick-actions {
+    background: var(--bg-white);
+    border-radius: var(--border-radius);
+    border: 1px solid var(--border-color);
+    padding: var(--spacing-lg);
+}
+
+.quick-actions h4 {
+    margin-bottom: var(--spacing-md);
+    font-size: var(--font-size-base);
+}
+
+.actions-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: var(--spacing-md);
+}
+
+.action-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-xs);
+    padding: var(--spacing-md);
+    background: var(--gray-50);
+    border-radius: var(--border-radius);
+    text-decoration: none;
+    color: var(--text-secondary);
+    transition: var(--transition);
+    position: relative;
+}
+
+.action-item:hover {
+    background: var(--primary-bg);
+    color: var(--primary);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+.action-item .action-icon {
+    font-size: 1.5rem;
+    color: var(--primary);
+}
+
+.action-item span {
+    font-size: var(--font-size-sm);
+    font-weight: 500;
+}
+
+.action-item .badge {
+    position: absolute;
+    top: -6px;
+    right: -6px;
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 1200px) {
+    .quick-stats {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 1024px) {
+    .dashboard-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 768px) {
+    .dashboard-welcome,
+    .quick-stats,
+    .dashboard-grid,
+    .quick-actions {
+        margin-bottom: var(--spacing-md);
+    }
+
+    .dashboard-grid,
+    .dashboard-column {
+        gap: var(--spacing-md);
+    }
+
+    .dashboard-welcome {
+        padding: var(--spacing-md);
+    }
+    
+    .dashboard-welcome .welcome-content {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .dashboard-welcome h1 {
+        font-size: var(--font-size-xl);
+    }
+    
+    .quick-stats {
+        grid-template-columns: 1fr 1fr;
+        gap: var(--spacing-sm);
+    }
+    
+    .quick-stats .stat-card {
+        padding: var(--spacing-md);
+    }
+    
+    .quick-stats .stat-card .stat-icon {
+        width: 36px;
+        height: 36px;
+        font-size: 1rem;
+    }
+    
+    .quick-stats .stat-card .stat-info h3 {
+        font-size: var(--font-size-xl);
+    }
+    
+    .chart-legend {
+        grid-template-columns: 1fr 1fr;
+    }
+    
+    .actions-grid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: var(--spacing-sm);
+    }
+}
+
+@media (max-width: 425px) {
+    .quick-stats {
+        grid-template-columns: 1fr;
+    }
+    
+    .actions-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .chart-legend {
+        grid-template-columns: 1fr;
+    }
+    
+    .activity-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: var(--spacing-xs);
+    }
+}

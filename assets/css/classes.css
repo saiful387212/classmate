@@ -1,0 +1,361 @@
+/* ============================================
+   CLASSMATE - Classes CSS
+   ============================================ */
+
+/* Status Stats */
+.status-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+    gap: var(--spacing-sm);
+    margin-bottom: var(--spacing-lg);
+}
+
+.status-stats .stat-item {
+    background: var(--bg-white);
+    padding: var(--spacing-md);
+    border-radius: var(--border-radius);
+    text-align: center;
+    border: 1px solid var(--border-color);
+}
+
+.status-stats .stat-item .stat-label {
+    display: block;
+    font-size: var(--font-size-xs);
+    color: var(--text-muted);
+}
+
+.status-stats .stat-item .stat-value {
+    display: block;
+    font-size: var(--font-size-2xl);
+    font-weight: 700;
+}
+
+.status-stats .stat-scheduled .stat-value { color: var(--primary); }
+.status-stats .stat-completed .stat-value { color: var(--success); }
+.status-stats .stat-cancelled .stat-value { color: var(--danger); }
+.status-stats .stat-retaked .stat-value { color: var(--warning); }
+
+/* Filter Form */
+.filter-form .filter-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-sm);
+    align-items: flex-end;
+}
+
+.filter-form .filter-group {
+    flex: 1;
+    min-width: 150px;
+}
+
+.filter-form .filter-group input,
+.filter-form .filter-group select {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    font-size: var(--font-size-sm);
+    transition: var(--transition);
+}
+
+.filter-form .filter-group input:focus,
+.filter-form .filter-group select:focus {
+    border-color: var(--primary);
+    outline: none;
+    box-shadow: 0 0 0 3px var(--primary-bg);
+}
+
+.filter-form .date-group {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+}
+
+.filter-form .date-group input {
+    flex: 1;
+    min-width: 120px;
+}
+
+.filter-form .date-group span {
+    color: var(--text-muted);
+    font-size: var(--font-size-sm);
+}
+
+.filter-form .filter-actions {
+    display: flex;
+    gap: var(--spacing-xs);
+    flex: 0 0 auto;
+}
+
+/* Classes Grid */
+.classes-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+    gap: var(--spacing-lg);
+}
+
+.class-card {
+    background: var(--bg-white);
+    border-radius: var(--border-radius);
+    border: 1px solid var(--border-color);
+    overflow: hidden;
+    transition: var(--transition);
+}
+
+.class-card:hover {
+    box-shadow: var(--shadow-md);
+    transform: translateY(-2px);
+}
+
+.class-card .class-card-header {
+    padding: var(--spacing-md) var(--spacing-lg);
+    background: var(--gray-50);
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: var(--spacing-sm);
+}
+
+.class-card .class-title h3 {
+    font-size: var(--font-size-base);
+    margin: 0;
+    color: var(--text-primary);
+}
+
+.class-card .class-title .class-code {
+    font-size: var(--font-size-xs);
+    color: var(--text-muted);
+    font-weight: 400;
+}
+
+.class-card .class-card-body {
+    padding: var(--spacing-md) var(--spacing-lg);
+}
+
+.class-card .class-info-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--spacing-sm);
+}
+
+.class-card .info-item {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+    font-size: var(--font-size-sm);
+    color: var(--text-secondary);
+}
+
+.class-card .info-item i {
+    width: 16px;
+    color: var(--text-muted);
+    font-size: var(--font-size-xs);
+}
+
+.class-card .class-topic {
+    margin-top: var(--spacing-sm);
+    padding-top: var(--spacing-sm);
+    border-top: 1px solid var(--border-color);
+    font-size: var(--font-size-sm);
+    color: var(--text-secondary);
+}
+
+.class-card .class-topic strong {
+    color: var(--text-primary);
+}
+
+.class-card .class-card-footer {
+    padding: var(--spacing-sm) var(--spacing-lg);
+    background: var(--gray-50);
+    border-top: 1px solid var(--border-color);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: var(--spacing-sm);
+}
+
+.class-card .class-actions {
+    display: flex;
+    gap: var(--spacing-xs);
+    flex-wrap: wrap;
+}
+
+/* Class Card Status Colors */
+.class-card.scheduled { border-left: 4px solid var(--primary); }
+.class-card.completed { border-left: 4px solid var(--success); }
+.class-card.cancelled { border-left: 4px solid var(--danger); }
+.class-card.retaked { border-left: 4px solid var(--warning); }
+
+/* Materials List */
+.materials-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+}
+
+.material-item {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+    padding: var(--spacing-md);
+    border-radius: var(--border-radius);
+    background: var(--gray-50);
+    transition: var(--transition);
+}
+
+.material-item:hover {
+    background: var(--gray-100);
+}
+
+.material-item .material-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: var(--border-radius);
+    background: var(--primary-bg);
+    color: var(--primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    flex-shrink: 0;
+}
+
+.material-item .material-info {
+    flex: 1;
+}
+
+.material-item .material-info h4 {
+    font-size: var(--font-size-sm);
+    margin: 0 0 var(--spacing-xs) 0;
+}
+
+.material-item .material-info p {
+    font-size: var(--font-size-sm);
+    color: var(--text-secondary);
+    margin: 0 0 var(--spacing-xs) 0;
+}
+
+.material-item .material-meta {
+    display: flex;
+    gap: var(--spacing-md);
+    font-size: var(--font-size-xs);
+    color: var(--text-muted);
+}
+
+.material-item .material-meta i {
+    margin-right: var(--spacing-xs);
+}
+
+.material-item .material-actions {
+    flex-shrink: 0;
+}
+
+/* Upload Section */
+.upload-section {
+    margin-bottom: var(--spacing-lg);
+}
+
+.upload-form {
+    margin-top: var(--spacing-md);
+    padding: var(--spacing-md);
+    background: var(--gray-50);
+    border-radius: var(--border-radius);
+    border: 1px solid var(--border-color);
+}
+
+/* Dropdown Wrapper */
+.dropdown-wrapper {
+    position: relative;
+    display: inline-block;
+}
+
+.dropdown-wrapper .dropdown-menu {
+    min-width: 180px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .classes-grid {
+        grid-template-columns: minmax(0, 1fr);
+        gap: var(--spacing-md);
+    }
+    
+    .filter-form .filter-row {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(110px, .75fr) auto;
+        align-items: stretch;
+    }
+    
+    .filter-form .filter-group {
+        width: 100%;
+        min-width: 0;
+    }
+
+    .filter-form .filter-actions {
+        width: auto;
+        flex-direction: row;
+    }
+
+    .filter-form .filter-actions .btn {
+        white-space: nowrap;
+    }
+    
+    .filter-form .date-group {
+        flex-wrap: wrap;
+    }
+    
+    .filter-form .date-group input {
+        min-width: 100px;
+    }
+    
+    .class-card .class-info-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .class-card .class-title,
+    .class-card .info-item {
+        min-width: 0;
+    }
+
+    .class-card .class-title h3,
+    .class-card .info-item span {
+        overflow-wrap: anywhere;
+    }
+    
+    .status-stats {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 425px) {
+    .filter-form .filter-row {
+        grid-template-columns: minmax(0, 1fr) minmax(90px, .7fr) auto;
+        gap: var(--spacing-xs);
+    }
+
+    .filter-form .filter-actions {
+        gap: 2px;
+    }
+
+    .filter-form .filter-actions .btn {
+        padding-left: 8px;
+        padding-right: 8px;
+        font-size: 12px;
+    }
+
+    .class-card .class-card-footer {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .class-card .class-card-footer .btn {
+        width: 100%;
+        justify-content: center;
+    }
+    
+    .class-card .class-actions {
+        justify-content: center;
+    }
+}

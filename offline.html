@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Offline - ClassMate</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: #F3F4F6;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .offline-container {
+            max-width: 500px;
+            text-align: center;
+            background: white;
+            padding: 50px 40px;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+        }
+        
+        .offline-icon {
+            font-size: 64px;
+            color: #4F46E5;
+            margin-bottom: 20px;
+            display: block;
+        }
+        
+        .offline-icon svg {
+            width: 80px;
+            height: 80px;
+        }
+        
+        h1 {
+            font-size: 24px;
+            color: #111827;
+            margin-bottom: 12px;
+        }
+        
+        p {
+            font-size: 16px;
+            color: #6B7280;
+            line-height: 1.6;
+            margin-bottom: 24px;
+        }
+        
+        .btn {
+            display: inline-block;
+            padding: 12px 32px;
+            background: #4F46E5;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            transition: background 0.3s ease;
+        }
+        
+        .btn:hover {
+            background: #4338CA;
+        }
+        
+        .btn-secondary {
+            background: #E5E7EB;
+            color: #374151;
+            margin-left: 8px;
+        }
+        
+        .btn-secondary:hover {
+            background: #D1D5DB;
+        }
+        
+        .features {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin: 24px 0;
+            text-align: left;
+        }
+        
+        .feature {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            color: #4B5563;
+        }
+        
+        .feature .check {
+            color: #10B981;
+            font-weight: bold;
+        }
+        
+        @media (max-width: 480px) {
+            .offline-container {
+                padding: 30px 20px;
+            }
+            
+            .features {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="offline-container">
+        <div class="offline-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 22c1.6 0 3-1.4 3-3H9c0 1.6 1.4 3 3 3z"/>
+                <path d="M19 13V9a7 7 0 0 0-14 0v4L3 20h18l-2-7z"/>
+                <line x1="12" y1="10" x2="12" y2="16"/>
+                <line x1="8" y1="12" x2="16" y2="12"/>
+            </svg>
+        </div>
+        <h1>You're Offline</h1>
+        <p>Don't worry! You can still access previously viewed pages and some features while offline.</p>
+        
+        <div class="features">
+            <div class="feature">
+                <span class="check">✓</span> View classes
+            </div>
+            <div class="feature">
+                <span class="check">✓</span> View assignments
+            </div>
+            <div class="feature">
+                <span class="check">✓</span> View announcements
+            </div>
+            <div class="feature">
+                <span class="check">✓</span> View class fund
+            </div>
+        </div>
+        
+        <div>
+            <button class="btn" onclick="location.reload()">
+                Try Again
+            </button>
+            <a href="/" class="btn btn-secondary">
+                Go Home
+            </a>
+        </div>
+    </div>
+</body>
+</html>

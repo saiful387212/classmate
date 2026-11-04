@@ -1,0 +1,713 @@
+/* ============================================
+   CLASSMATE - Fund Events CSS
+   ============================================ */
+
+/* ===== Fund Events Header and Status Filters ===== */
+.main-content:has(.events-grid) {
+    position: relative;
+}
+
+.main-content:has(.events-grid)::before {
+    content: '';
+    display: block;
+    height: 4px;
+    margin: calc(var(--spacing-lg) * -1) calc(var(--spacing-lg) * -1) var(--spacing-md);
+    background: linear-gradient(90deg, var(--primary), var(--info), var(--success));
+}
+
+.main-content:has(.events-grid) .page-header {
+    padding: var(--spacing-md) 0 var(--spacing-lg);
+}
+
+.main-content:has(.events-grid) .page-header h1 {
+    margin-bottom: var(--spacing-xs);
+}
+
+.main-content:has(.events-grid) .page-header p {
+    margin-bottom: 0;
+}
+
+.status-stats {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: var(--spacing-sm);
+    margin-bottom: var(--spacing-lg);
+}
+
+.status-stats .stat-item {
+    background: var(--bg-white);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius-lg);
+    box-shadow: var(--shadow-sm);
+    overflow: hidden;
+    transition: var(--transition);
+}
+
+.status-stats .stat-item:hover,
+.status-stats .stat-item.active {
+    border-color: var(--primary-light);
+    box-shadow: var(--shadow-md);
+    transform: translateY(-2px);
+}
+
+.status-stats .stat-link {
+    display: block;
+    padding: var(--spacing-md) var(--spacing-lg);
+    color: var(--text-primary);
+    text-decoration: none;
+}
+
+.status-stats .stat-label,
+.status-stats .stat-value {
+    display: block;
+}
+
+.status-stats .stat-label {
+    color: var(--text-muted);
+    font-size: var(--font-size-xs);
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+}
+
+.status-stats .stat-value {
+    color: var(--primary);
+    font-size: var(--font-size-2xl);
+    font-weight: 800;
+    line-height: 1.15;
+    margin-top: var(--spacing-xs);
+}
+
+.status-stats .stat-active .stat-value { color: var(--success); }
+.status-stats .stat-closed .stat-value { color: var(--warning); }
+.status-stats .stat-archived .stat-value { color: var(--gray-500); }
+
+.filter-bar .filter-form,
+.filter-bar .filter-row {
+    width: 100%;
+}
+
+.filter-bar .filter-row {
+    display: grid;
+    grid-template-columns: minmax(180px, 1.5fr) minmax(130px, 1fr) minmax(150px, 1fr) minmax(250px, 1.5fr) auto;
+    align-items: end;
+    gap: var(--spacing-sm);
+}
+
+.filter-bar .filter-group,
+.filter-bar .date-group,
+.filter-bar .filter-actions {
+    min-width: 0;
+}
+
+.filter-bar input,
+.filter-bar select {
+    width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+}
+
+.filter-bar .date-group {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+    align-items: center;
+    gap: var(--spacing-xs);
+}
+
+.filter-bar .filter-actions {
+    display: flex;
+    gap: var(--spacing-xs);
+}
+
+.filter-bar .filter-actions .btn {
+    white-space: nowrap;
+}
+
+@media (max-width: 1024px) {
+    .filter-bar .filter-row {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .filter-bar .filter-group:first-child {
+        grid-column: span 2;
+    }
+
+    .filter-bar .filter-actions {
+        justify-content: flex-end;
+    }
+}
+
+@media (max-width: 600px) {
+    .main-content:has(.events-grid)::before {
+        margin-left: calc(var(--spacing-sm) * -1);
+        margin-right: calc(var(--spacing-sm) * -1);
+    }
+
+    .status-stats {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .status-stats .stat-link {
+        padding: var(--spacing-sm) var(--spacing-md);
+    }
+
+    .status-stats .stat-value {
+        font-size: var(--font-size-xl);
+    }
+
+    .filter-bar {
+        padding: var(--spacing-md);
+    }
+
+    .filter-bar .filter-row,
+    .filter-bar .filter-group:first-child {
+        grid-template-columns: 1fr;
+        grid-column: auto;
+    }
+
+    .filter-bar .date-group {
+        grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+    }
+
+    .filter-bar .filter-actions {
+        justify-content: stretch;
+    }
+
+    .filter-bar .filter-actions .btn {
+        flex: 1;
+        justify-content: center;
+    }
+}
+
+/* ===== Events Grid ===== */
+.events-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+    gap: var(--spacing-lg);
+}
+
+.event-card {
+    background: var(--bg-white);
+    border-radius: var(--border-radius);
+    border: 1px solid var(--border-color);
+    overflow: hidden;
+    transition: var(--transition);
+}
+
+.event-card:hover {
+    box-shadow: var(--shadow-md);
+    transform: translateY(-2px);
+}
+
+.event-card .event-card-header {
+    padding: var(--spacing-md) var(--spacing-lg);
+    background: var(--gray-50);
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: var(--spacing-sm);
+}
+
+.event-card .event-title h3 {
+    font-size: var(--font-size-base);
+    margin: 0;
+}
+
+.event-card .event-title .event-class {
+    font-size: var(--font-size-xs);
+    color: var(--text-muted);
+    font-weight: 400;
+}
+
+.event-card .event-card-body {
+    padding: var(--spacing-md) var(--spacing-lg);
+}
+
+.event-card .event-description {
+    font-size: var(--font-size-sm);
+    color: var(--text-secondary);
+    margin: 0 0 var(--spacing-md) 0;
+}
+
+.event-card .event-stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    gap: var(--spacing-sm);
+    margin-bottom: var(--spacing-md);
+}
+
+.event-card .event-stats .stat-item {
+    text-align: center;
+    background: var(--gray-50);
+    padding: var(--spacing-sm);
+    border-radius: var(--border-radius);
+}
+
+.event-card .event-stats .stat-value {
+    display: block;
+    font-size: var(--font-size-sm);
+    font-weight: 600;
+}
+
+.event-card .event-stats .stat-item.income .stat-value { color: var(--success); }
+.event-card .event-stats .stat-item.expenditure .stat-value { color: var(--danger); }
+.event-card .event-stats .stat-item.refund .stat-value { color: var(--warning); }
+.event-card .event-stats .stat-item.balance .stat-value { color: var(--primary); }
+
+.event-card .event-stats .stat-label {
+    font-size: var(--font-size-xs);
+    color: var(--text-muted);
+}
+
+.event-card .event-meta {
+    display: flex;
+    gap: var(--spacing-md);
+    flex-wrap: wrap;
+    font-size: var(--font-size-xs);
+    color: var(--text-muted);
+}
+
+.event-card .event-meta i {
+    margin-right: var(--spacing-xs);
+}
+
+.event-card .event-card-footer {
+    padding: var(--spacing-sm) var(--spacing-lg);
+    background: var(--gray-50);
+    border-top: 1px solid var(--border-color);
+}
+
+.event-card .event-actions {
+    display: flex;
+    gap: var(--spacing-xs);
+    flex-wrap: wrap;
+}
+
+/* ===== Event Status Colors ===== */
+.event-card.active { border-left: 4px solid var(--success); }
+.event-card.closed { border-left: 4px solid var(--warning); }
+.event-card.archived { border-left: 4px solid var(--gray-400); }
+
+/* ===== Fund Dashboard Stats ===== */
+.fund-dashboard-stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--spacing-md);
+    margin-bottom: var(--spacing-lg);
+}
+
+.fund-dashboard-stats .stat-card {
+    padding: var(--spacing-lg);
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+    background: var(--bg-white);
+    border-radius: var(--border-radius);
+    border: 1px solid var(--border-color);
+    transition: var(--transition);
+}
+
+.fund-dashboard-stats .stat-card:hover {
+    box-shadow: var(--shadow-md);
+}
+
+.fund-dashboard-stats .stat-card .stat-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: var(--border-radius);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.4rem;
+    flex-shrink: 0;
+}
+
+.fund-dashboard-stats .stat-card.income .stat-icon {
+    background: var(--success-light);
+    color: var(--success);
+}
+.fund-dashboard-stats .stat-card.expenditure .stat-icon {
+    background: var(--danger-light);
+    color: var(--danger);
+}
+.fund-dashboard-stats .stat-card.refund .stat-icon {
+    background: var(--warning-light);
+    color: var(--warning);
+}
+.fund-dashboard-stats .stat-card.balance .stat-icon {
+    background: var(--primary-bg);
+    color: var(--primary);
+}
+
+.fund-dashboard-stats .stat-card .stat-info {
+    flex: 1;
+}
+
+.fund-dashboard-stats .stat-card .stat-info h3 {
+    font-size: var(--font-size-xl);
+    margin: 0;
+    line-height: 1.2;
+}
+
+.fund-dashboard-stats .stat-card .stat-info p {
+    margin: 0;
+    color: var(--text-muted);
+    font-size: var(--font-size-sm);
+}
+
+.fund-dashboard-stats .stat-card .stat-info small {
+    font-size: var(--font-size-xs);
+    color: var(--text-muted);
+}
+
+/* ============================================
+   RESPONSIVE
+   ============================================ */
+
+@media (max-width: 1024px) {
+    .events-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+    
+    .fund-dashboard-stats {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+@media (max-width: 768px) {
+    .events-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .fund-dashboard-stats {
+        grid-template-columns: 1fr 1fr;
+    }
+    
+    .event-card .event-stats {
+        grid-template-columns: 1fr 1fr;
+    }
+    
+    .event-card .event-actions {
+        flex-wrap: wrap;
+    }
+    
+    .event-card .event-actions .btn {
+        flex: 1;
+        min-width: 80px;
+        justify-content: center;
+    }
+}
+
+@media (max-width: 425px) {
+    .fund-dashboard-stats {
+        grid-template-columns: 1fr;
+    }
+    
+    .event-card .event-stats {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+/* ============================================
+   STUDENT FUND VIEW ADDITIONS
+   ============================================ */
+
+/* ===== Student Fund Stats ===== */
+.fund-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--spacing-md);
+    margin-bottom: var(--spacing-lg);
+}
+
+.fund-stats-grid .stat-card {
+    padding: var(--spacing-lg);
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+    background: var(--bg-white);
+    border-radius: var(--border-radius);
+    border: 1px solid var(--border-color);
+    transition: var(--transition);
+}
+
+.fund-stats-grid .stat-card:hover {
+    box-shadow: var(--shadow-md);
+    transform: translateY(-2px);
+}
+
+.fund-stats-grid .stat-card .stat-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: var(--border-radius);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.4rem;
+    flex-shrink: 0;
+}
+
+.fund-stats-grid .stat-card.income .stat-icon {
+    background: var(--success-light);
+    color: var(--success);
+}
+.fund-stats-grid .stat-card.expenditure .stat-icon {
+    background: var(--danger-light);
+    color: var(--danger);
+}
+.fund-stats-grid .stat-card.refund .stat-icon {
+    background: var(--warning-light);
+    color: var(--warning);
+}
+.fund-stats-grid .stat-card.balance .stat-icon {
+    background: var(--primary-bg);
+    color: var(--primary);
+}
+
+.fund-stats-grid .stat-card .stat-info {
+    flex: 1;
+}
+
+.fund-stats-grid .stat-card .stat-info h3 {
+    font-size: var(--font-size-xl);
+    margin: 0;
+    line-height: 1.2;
+}
+
+.fund-stats-grid .stat-card .stat-info p {
+    margin: 0;
+    color: var(--text-muted);
+    font-size: var(--font-size-sm);
+}
+
+.fund-stats-grid .stat-card .stat-info small {
+    font-size: var(--font-size-xs);
+    color: var(--text-muted);
+    opacity: 0.7;
+}
+
+/* ===== Event Details Modal ===== */
+.event-details .event-summary {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--spacing-md);
+    margin-bottom: var(--spacing-lg);
+}
+
+.event-details .summary-item {
+    text-align: center;
+    padding: var(--spacing-md);
+    background: var(--gray-50);
+    border-radius: var(--border-radius);
+}
+
+.event-details .summary-item .label {
+    display: block;
+    font-size: var(--font-size-xs);
+    color: var(--text-muted);
+}
+
+.event-details .summary-item .value {
+    display: block;
+    font-size: var(--font-size-lg);
+    font-weight: 600;
+}
+
+.event-details .summary-item .value.income { color: var(--success); }
+.event-details .summary-item .value.expenditure { color: var(--danger); }
+.event-details .summary-item .value.refund { color: var(--warning); }
+.event-details .summary-item .value.balance { color: var(--primary); }
+
+.event-details .event-description {
+    color: var(--text-secondary);
+    margin-bottom: var(--spacing-lg);
+}
+
+.event-details h4 {
+    margin-bottom: var(--spacing-md);
+    color: var(--text-primary);
+}
+
+/* ============================================
+   RESPONSIVE
+   ============================================ */
+
+@media (max-width: 1024px) {
+    .fund-stats-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+    
+    .event-details .event-summary {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+@media (max-width: 768px) {
+    .fund-stats-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+    
+    .fund-stats-grid .stat-card {
+        padding: var(--spacing-md);
+    }
+    
+    .fund-stats-grid .stat-card .stat-icon {
+        width: 36px;
+        height: 36px;
+        font-size: 1rem;
+    }
+    
+    .fund-stats-grid .stat-card .stat-info h3 {
+        font-size: var(--font-size-lg);
+    }
+    
+    .event-details .event-summary {
+        grid-template-columns: 1fr 1fr;
+        gap: var(--spacing-sm);
+    }
+    
+    .events-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 425px) {
+    .fund-stats-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: var(--spacing-sm);
+    }
+    
+    .fund-stats-grid .stat-card {
+        padding: var(--spacing-sm);
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .fund-stats-grid .stat-card .stat-icon {
+        width: 32px;
+        height: 32px;
+        font-size: 0.9rem;
+    }
+    
+    .fund-stats-grid .stat-card .stat-info h3 {
+        font-size: var(--font-size-base);
+    }
+    
+    .event-details .event-summary {
+        grid-template-columns: 1fr 1fr;
+    }
+    
+    .event-card .event-stats {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+/* ============================================
+   EDIT FUND TRANSACTION ADDITIONS
+   ============================================ */
+
+/* ===== Type Selector ===== */
+.type-selector {
+    display: flex;
+    gap: var(--spacing-sm);
+    flex-wrap: wrap;
+}
+
+.type-option {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    padding: 10px 20px;
+    border: 2px solid var(--border-color);
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    transition: var(--transition);
+    flex: 1;
+    justify-content: center;
+    min-width: 100px;
+}
+
+.type-option:hover {
+    border-color: var(--gray-400);
+    background: var(--gray-50);
+}
+
+.type-option.selected {
+    border-color: var(--primary);
+    background: var(--primary-bg);
+}
+
+.type-option input[type="radio"] {
+    display: none;
+}
+
+.type-option i {
+    font-size: 1.2rem;
+}
+
+.type-option.income i { color: var(--success); }
+.type-option.expenditure i { color: var(--danger); }
+.type-option.refund i { color: var(--warning); }
+
+.type-option.income.selected { border-color: var(--success); background: var(--success-light); }
+.type-option.expenditure.selected { border-color: var(--danger); background: var(--danger-light); }
+.type-option.refund.selected { border-color: var(--warning); background: var(--warning-light); }
+
+.type-option span {
+    font-weight: 500;
+    font-size: var(--font-size-sm);
+}
+
+/* ===== Transaction Info ===== */
+.transaction-info {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--spacing-md);
+    padding: var(--spacing-md);
+    background: var(--gray-50);
+    border-radius: var(--border-radius);
+    margin: var(--spacing-md) 0;
+}
+
+.transaction-info .info-item {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-xs);
+}
+
+.transaction-info .info-item label {
+    font-size: var(--font-size-xs);
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.transaction-info .info-item span {
+    font-size: var(--font-size-sm);
+    color: var(--text-primary);
+}
+
+/* ============================================
+   RESPONSIVE
+   ============================================ */
+
+@media (max-width: 768px) {
+    .type-selector {
+        flex-direction: column;
+    }
+    
+    .type-option {
+        min-width: unset;
+        padding: 8px 16px;
+    }
+    
+    .transaction-info {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+@media (max-width: 425px) {
+    .transaction-info {
+        grid-template-columns: 1fr;
+    }
+}

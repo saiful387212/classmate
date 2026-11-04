@@ -1,0 +1,27 @@
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # Keep the page, manifest, and service worker on the same origin.
+    RewriteCond %{HTTP_HOST} !^(localhost|127\.0\.0\.1|\[::1\]|192\.168\.\d+\.\d+|10\.\d+\.\d+\.\d+|172\.(1[6-9]|2[0-9]|3[0-1])\.\d+\.\d+|([a-z0-9-]+\.)*[a-z0-9-]+\.local)(:\d+)?$ [NC]
+    RewriteCond %{HTTP_HOST} !^classmate\.site\.je$ [NC]
+    RewriteRule ^ https://classmate.site.je%{REQUEST_URI} [R=301,L]
+
+    RewriteCond %{HTTP_HOST} !^(localhost|127\.0\.0\.1|\[::1\]|192\.168\.\d+\.\d+|10\.\d+\.\d+\.\d+|172\.(1[6-9]|2[0-9]|3[0-1])\.\d+\.\d+|([a-z0-9-]+\.)*[a-z0-9-]+\.local)(:\d+)?$ [NC]
+    RewriteCond %{HTTPS} !=on
+    RewriteCond %{HTTP:X-Forwarded-Proto} !https [NC]
+    RewriteRule ^ https://classmate.site.je%{REQUEST_URI} [R=302,L]
+</IfModule>
+
+<IfModule mod_mime.c>
+    AddType application/manifest+json .webmanifest
+    AddType application/manifest+json .json
+    AddType application/javascript .js
+</IfModule>
+# Force manifest.json to be served as JSON and skip security challenge
+<Files "manifest.json">
+    ForceType application/manifest+json
+    Header set Cache-Control "no-cache"
+</Files>
+
+# Ensure the correct MIME type for JSON files
+AddType application/manifest+json .json
