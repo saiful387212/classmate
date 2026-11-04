@@ -114,13 +114,7 @@ include_once BASE_PATH . '/includes/header.php';
             </div>
         </div>
         
-        <div class="auth-info">
-            <div class="info-card">
-                <i class="fas fa-shield-alt"></i>
-                <h4>Secure Admin Access</h4>
-                <p>This area is restricted to authorized administrators only.</p>
-                <p class="text-muted small">Default admin: admin / Admin@2026</p>
-            </div>
+        
         </div>
     </div>
 </div>

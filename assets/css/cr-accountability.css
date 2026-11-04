@@ -34,7 +34,7 @@
 
 /* ===== Top CR Spotlight ===== */
 .top-cr-spotlight {
-    background: linear-gradient(135deg, #4F46E5 0%, #7C3AED 100%);
+    background: linear-gradient(135deg, #0F766E 0%, #164E63 100%);
     border-radius: var(--border-radius-lg);
     padding: var(--spacing-xl);
     margin-bottom: var(--spacing-lg);

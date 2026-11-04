@@ -4,11 +4,11 @@
 
 /* ===== Variables ===== */
 :root {
-    --landing-primary: #4F46E5;
-    --landing-primary-dark: #4338CA;
-    --landing-primary-light: #818CF8;
-    --landing-secondary: #7C3AED;
-    --landing-gradient: linear-gradient(135deg, #4F46E5 0%, #7C3AED 50%, #6D28D9 100%);
+    --landing-primary: #0F766E;
+    --landing-primary-dark: #115E59;
+    --landing-primary-light: #2DD4BF;
+    --landing-secondary: #164E63;
+    --landing-gradient: linear-gradient(135deg, #0F766E 0%, #0E7490 50%, #164E63 100%);
     --landing-bg: #F8FAFC;
     --landing-text: #1E293B;
     --landing-text-muted: #64748B;
@@ -379,7 +379,7 @@
 }
 
 .section-title .highlight {
-    background: linear-gradient(135deg, #4F46E5 0%, #7C3AED 100%);
+    background: var(--landing-gradient);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;

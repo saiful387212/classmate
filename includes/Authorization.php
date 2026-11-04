@@ -53,7 +53,14 @@ class Authorization {
         if (!Auth::checkRole('student')) return null;
         $studentId = Session::get('user_id');
         $db = Database::getInstance();
-        $stmt = $db->prepare("SELECT batch_id FROM students WHERE id = ? LIMIT 1");
+        $stmt = $db->prepare("
+            SELECT COALESCE(NULLIF(s.batch_id, 0), b.id) AS batch_id
+            FROM students s
+            LEFT JOIN batches b
+                ON b.name COLLATE utf8mb4_unicode_ci = s.batch COLLATE utf8mb4_unicode_ci
+            WHERE s.id = ?
+            LIMIT 1
+        ");
         $stmt->execute([$studentId]);
         $row = $stmt->fetch();
         return $row ? ((int)$row['batch_id'] ?: null) : null;

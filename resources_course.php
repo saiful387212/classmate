@@ -13,6 +13,11 @@ $pageTitle = 'Course Resources';
 $pageCss = ['student.css', 'resources.css'];
 $pageJs = ['resources.js'];
 
+function getResourceDownloadUrl(int $resourceId): string
+{
+    return url('api/resource-download.php?id=' . $resourceId);
+}
+
 $db = Database::getInstance();
 $batchId = (int)(Authorization::getStudentBatchId() ?? 0);
 
@@ -43,23 +48,34 @@ $activeTab = $_GET['tab'] ?? 'notes'; // notes or questions
 // ============================================
 // GET NOTES
 // ============================================
-$notesSql = "SELECT * FROM resources WHERE course_id = ? AND resource_type = 'note' AND status = 'published'";
-$notesSql .= " AND batch_id = ?";
-$notesParams = [$courseId, $batchId];
+$notesSql = "
+    SELECT r.*,
+        EXISTS(
+            SELECT 1 FROM resource_bookmarks rb
+            WHERE rb.student_id = ? AND rb.resource_id = r.id
+        ) AS is_bookmarked,
+        (SELECT COUNT(*) FROM resource_reviews rr WHERE rr.resource_id = r.id) AS review_count,
+        (SELECT rating FROM resource_reviews rr WHERE rr.resource_id = r.id AND rr.student_id = ? LIMIT 1) AS my_rating,
+        (SELECT review_text FROM resource_reviews rr WHERE rr.resource_id = r.id AND rr.student_id = ? LIMIT 1) AS my_review
+    FROM resources r
+    WHERE r.course_id = ? AND r.resource_type = 'note' AND r.status = 'published'
+";
+$notesSql .= " AND r.batch_id = ?";
+$notesParams = [Session::get('user_id'), Session::get('user_id'), Session::get('user_id'), $courseId, $batchId];
 
 if (!empty($search)) {
-    $notesSql .= " AND (title LIKE ? OR subject LIKE ?)";
+    $notesSql .= " AND (r.title LIKE ? OR r.subject LIKE ?)";
     $searchTerm = '%' . $search . '%';
     $notesParams[] = $searchTerm;
     $notesParams[] = $searchTerm;
 }
 
 if (!empty($yearFilter)) {
-    $notesSql .= " AND year = ?";
+    $notesSql .= " AND r.year = ?";
     $notesParams[] = $yearFilter;
 }
 
-$notesSql .= " ORDER BY created_at DESC";
+$notesSql .= " ORDER BY r.created_at DESC";
 $stmt = $db->prepare($notesSql);
 $stmt->execute($notesParams);
 $notes = $stmt->fetchAll();
@@ -67,12 +83,23 @@ $notes = $stmt->fetchAll();
 // ============================================
 // GET QUESTIONS
 // ============================================
-$questionsSql = "SELECT * FROM resources WHERE course_id = ? AND resource_type = 'question' AND status = 'published'";
-$questionsSql .= " AND batch_id = ?";
-$questionsParams = [$courseId, $batchId];
+$questionsSql = "
+    SELECT r.*,
+        EXISTS(
+            SELECT 1 FROM resource_bookmarks rb
+            WHERE rb.student_id = ? AND rb.resource_id = r.id
+        ) AS is_bookmarked,
+        (SELECT COUNT(*) FROM resource_reviews rr WHERE rr.resource_id = r.id) AS review_count,
+        (SELECT rating FROM resource_reviews rr WHERE rr.resource_id = r.id AND rr.student_id = ? LIMIT 1) AS my_rating,
+        (SELECT review_text FROM resource_reviews rr WHERE rr.resource_id = r.id AND rr.student_id = ? LIMIT 1) AS my_review
+    FROM resources r
+    WHERE r.course_id = ? AND r.resource_type = 'question' AND r.status = 'published'
+";
+$questionsSql .= " AND r.batch_id = ?";
+$questionsParams = [Session::get('user_id'), Session::get('user_id'), Session::get('user_id'), $courseId, $batchId];
 
 if (!empty($search)) {
-    $questionsSql .= " AND (title LIKE ? OR subject LIKE ? OR exam_type LIKE ?)";
+    $questionsSql .= " AND (r.title LIKE ? OR r.subject LIKE ? OR r.exam_type LIKE ?)";
     $searchTerm = '%' . $search . '%';
     $questionsParams[] = $searchTerm;
     $questionsParams[] = $searchTerm;
@@ -80,11 +107,11 @@ if (!empty($search)) {
 }
 
 if (!empty($yearFilter)) {
-    $questionsSql .= " AND year = ?";
+    $questionsSql .= " AND r.year = ?";
     $questionsParams[] = $yearFilter;
 }
 
-$questionsSql .= " ORDER BY year DESC, created_at DESC";
+$questionsSql .= " ORDER BY r.year DESC, r.created_at DESC";
 $stmt = $db->prepare($questionsSql);
 $stmt->execute($questionsParams);
 $questions = $stmt->fetchAll();
@@ -97,7 +124,6 @@ $stmt = $db->prepare("
 ");
 $stmt->execute([$courseId, $batchId]);
 $years = $stmt->fetchAll(PDO::FETCH_COLUMN);
-
 // Exam type labels
 $examTypes = [
     'midterm' => 'Midterm',
@@ -110,7 +136,10 @@ $examTypes = [
 include_once BASE_PATH . '/includes/header.php';
 ?>
 
-<div class="resources-page">
+<div class="resources-page"
+     data-resource-api="<?php echo htmlspecialchars(url('api/resource-actions.php'), ENT_QUOTES, 'UTF-8'); ?>"
+     data-csrf-token="<?php echo htmlspecialchars(Security::generateCSRFToken(), ENT_QUOTES, 'UTF-8'); ?>">
+
     <!-- Breadcrumb -->
     <nav class="breadcrumb-nav">
         <a href="resources.php">
@@ -129,9 +158,15 @@ include_once BASE_PATH . '/includes/header.php';
                 <span><i class="fas fa-calendar"></i> <?php echo htmlspecialchars($course['semester'] ?? 'N/A'); ?></span>
             </div>
         </div>
-        <a href="https://forms.gle/YOUR_FORM_LINK" target="_blank" class="btn btn-primary">
-            <i class="fas fa-plus"></i> Submit a Resource
-        </a>
+        <!-- Added Discussion Button and Submit Button in a flex container -->
+        <div class="course-header-actions" style="display: flex; gap: 10px; flex-wrap: wrap;">
+            <a href="discussion.php?course_id=<?php echo $courseId; ?>" class="btn btn-outline-primary">
+                <i class="fas fa-comments"></i> Class Discussion
+            </a>
+            <a href="https://forms.gle/YOUR_FORM_LINK" target="_blank" class="btn btn-primary">
+                <i class="fas fa-plus"></i> Submit a Resource
+            </a>
+        </div>
     </div>
 
     <!-- Search & Filter Bar -->
@@ -194,62 +229,78 @@ include_once BASE_PATH . '/includes/header.php';
     <!-- ============================================
     NOTES TAB
     ============================================ -->
-    <?php if ($activeTab === 'notes'): ?>
-        <?php if (empty($notes)): ?>
-            <div class="empty-state">
-                <div class="empty-icon">📚</div>
-                <h3>No Notes Found</h3>
-                <p>Notes will appear here when students start contributing.</p>
-                <a href="https://forms.gle/YOUR_FORM_LINK" target="_blank" class="btn btn-primary">
-                    <i class="fas fa-plus"></i> Submit a Resource
-                </a>
+    <?php if ($activeTab !== 'questions'): ?>
+    <?php if (empty($notes)): ?>
+        <div class="empty-state">
+            <div class="empty-icon">📚</div>
+            <h3>No Notes Found</h3>
+            <p>Notes for this course will appear here when available.</p>
+        </div>
+    <?php else: ?>
+    <div class="resources-grid">
+    <?php foreach ($notes as $note): ?>
+        <div class="resource-card" data-resource-id="<?php echo (int)$note['id']; ?>"
+             data-my-rating="<?php echo (int)($note['my_rating'] ?? 0); ?>"
+             data-my-review="<?php echo htmlspecialchars($note['my_review'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
+            <div class="resource-card-header">
+                <div class="resource-icon"><i class="fas fa-book"></i></div>
+                <button type="button" class="bookmark-btn <?php echo $note['is_bookmarked'] ? 'active' : ''; ?>"
+                        data-resource-action="toggle_bookmark" data-resource-id="<?php echo (int)$note['id']; ?>"
+                        aria-label="<?php echo $note['is_bookmarked'] ? 'Remove bookmark' : 'Bookmark resource'; ?>"
+                        aria-pressed="<?php echo $note['is_bookmarked'] ? 'true' : 'false'; ?>">
+                    <i class="<?php echo $note['is_bookmarked'] ? 'fas' : 'far'; ?> fa-bookmark"></i>
+                </button>
             </div>
-        <?php else: ?>
-            <div class="resources-grid">
-                <?php foreach ($notes as $note): ?>
-                    <div class="resource-card">
-                        <div class="resource-card-header">
-                            <div class="resource-icon">
-                                <i class="fas fa-book"></i>
-                            </div>
-                            <span class="resource-subject-badge">
-                                <?php echo htmlspecialchars($note['year']); ?>
-                            </span>
-                        </div>
-                        
-                        <div class="resource-card-body">
-                            <h3><?php echo htmlspecialchars($note['title']); ?></h3>
-                            
-                            <div class="resource-meta">
-                                <div class="meta-item">
-                                    <i class="fas fa-user"></i>
-                                    <span>Added by: <?php echo htmlspecialchars($note['added_by']); ?></span>
-                                </div>
-                                <div class="meta-item">
-                                    <i class="fas fa-clock"></i>
-                                    <span><?php echo date('M d, Y', strtotime($note['created_at'])); ?></span>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="resource-card-footer">
-                            <a href="<?php echo htmlspecialchars($note['drive_link']); ?>" 
-                               target="_blank" 
-                               rel="noopener noreferrer"
-                               class="btn btn-primary btn-block">
-                                <i class="fas fa-external-link-alt"></i> View Note
-                            </a>
-                        </div>
+            
+            <div class="resource-card-body">
+                <h3><?php echo htmlspecialchars($note['title']); ?></h3>
+                <div class="resource-meta">
+                    <div class="meta-item rating-display">
+                        <i class="fas fa-star text-warning"></i>
+                        <span><?php echo number_format((float)($note['average_rating'] ?? 0), 1); ?> rating (<?php echo (int)$note['review_count']; ?> reviews)</span>
                     </div>
-                <?php endforeach; ?>
+                    <div class="meta-item">
+                        <i class="fas fa-eye"></i>
+                        <span data-resource-count="views"><?php echo (int)$note['views_count']; ?> views</span>
+                    </div>
+                    <div class="meta-item">
+                        <i class="fas fa-download"></i>
+                        <span data-resource-count="downloads"><?php echo (int)$note['download_count']; ?> downloads</span>
+                    </div>
+                    <div class="meta-item">
+                        <i class="fas fa-user"></i>
+                        <span><?php echo htmlspecialchars($note['added_by']); ?></span>
+                    </div>
+                </div>
             </div>
-        <?php endif; ?>
+            
+            <div class="resource-card-footer resource-interaction-actions">
+                <button type="button" class="btn btn-primary" style="flex: 1;"
+                        data-open-preview
+                        data-preview-url="<?php echo htmlspecialchars($note['drive_link'], ENT_QUOTES, 'UTF-8'); ?>"
+                        data-preview-title="<?php echo htmlspecialchars($note['title'], ENT_QUOTES, 'UTF-8'); ?>"
+                        data-resource-id="<?php echo (int)$note['id']; ?>">
+                    <i class="fas fa-eye"></i> Preview
+                </button>
+                <a href="<?php echo htmlspecialchars(getResourceDownloadUrl((int)$note['id']), ENT_QUOTES, 'UTF-8'); ?>"
+                   class="btn btn-outline"
+                   aria-label="Download <?php echo htmlspecialchars($note['title'], ENT_QUOTES, 'UTF-8'); ?>">
+                    <i class="fas fa-download"></i> Download
+                </a>
+                
+                <button type="button" class="btn btn-outline" data-open-review data-resource-id="<?php echo (int)$note['id']; ?>">
+                    <i class="fas fa-star"></i> Review
+                </button>
+            </div>
+        </div>
+    <?php endforeach; ?>
+</div>
     <?php endif; ?>
 
     <!-- ============================================
     QUESTIONS TAB
     ============================================ -->
-    <?php if ($activeTab === 'questions'): ?>
+    <?php else: ?>
         <?php if (empty($questions)): ?>
             <div class="empty-state">
                 <div class="empty-icon">📝</div>
@@ -260,49 +311,106 @@ include_once BASE_PATH . '/includes/header.php';
                 </a>
             </div>
         <?php else: ?>
-            <div class="resources-table-wrapper">
-                <table class="resources-table">
-                    <thead>
-                        <tr>
-                            <th>Title</th>
-                            <th>Exam</th>
-                            <th>Year</th>
-                            <th>Added By</th>
-                            <th>Action</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php foreach ($questions as $question): ?>
-                            <tr>
-                                <td data-label="Title">
-                                    <strong><?php echo htmlspecialchars($question['title']); ?></strong>
-                                </td>
-                                <td data-label="Exam">
-                                    <span class="exam-badge exam-<?php echo $question['exam_type']; ?>">
-                                        <?php echo htmlspecialchars($examTypes[$question['exam_type']] ?? ucfirst($question['exam_type'])); ?>
-                                    </span>
-                                </td>
-                                <td data-label="Year">
-                                    <span class="year-badge"><?php echo htmlspecialchars($question['year']); ?></span>
-                                </td>
-                                <td data-label="Added By">
-                                    <?php echo htmlspecialchars($question['added_by']); ?>
-                                </td>
-                                <td data-label="Action">
-                                    <a href="<?php echo htmlspecialchars($question['drive_link']); ?>" 
-                                       target="_blank" 
-                                       rel="noopener noreferrer"
-                                       class="btn btn-sm btn-primary">
-                                        <i class="fas fa-external-link-alt"></i> View
-                                    </a>
-                                </td>
-                            </tr>
-                        <?php endforeach; ?>
-                    </tbody>
-                </table>
+            <div class="resources-grid">
+                <?php foreach ($questions as $question): ?>
+                    <div class="resource-card" data-resource-id="<?php echo (int)$question['id']; ?>"
+                         data-my-rating="<?php echo (int)($question['my_rating'] ?? 0); ?>"
+                         data-my-review="<?php echo htmlspecialchars($question['my_review'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
+                        <div class="resource-card-header">
+                            <div class="resource-icon"><i class="fas fa-question-circle"></i></div>
+                            <button type="button" class="bookmark-btn <?php echo $question['is_bookmarked'] ? 'active' : ''; ?>"
+                                    data-resource-action="toggle_bookmark" data-resource-id="<?php echo (int)$question['id']; ?>"
+                                    aria-label="<?php echo $question['is_bookmarked'] ? 'Remove bookmark' : 'Bookmark resource'; ?>"
+                                    aria-pressed="<?php echo $question['is_bookmarked'] ? 'true' : 'false'; ?>">
+                                <i class="<?php echo $question['is_bookmarked'] ? 'fas' : 'far'; ?> fa-bookmark"></i>
+                            </button>
+                        </div>
+                        <div class="resource-card-body">
+                            <h3><?php echo htmlspecialchars($question['title']); ?></h3>
+                            <div class="resource-meta">
+                                <div class="meta-item">
+                                    <i class="fas fa-file-alt"></i>
+                                    <span><?php echo htmlspecialchars($examTypes[$question['exam_type']] ?? ucfirst($question['exam_type'])); ?> · <?php echo htmlspecialchars($question['year']); ?></span>
+                                </div>
+                                <div class="meta-item rating-display">
+                                    <i class="fas fa-star text-warning"></i>
+                                    <span><?php echo number_format((float)($question['average_rating'] ?? 0), 1); ?> rating (<?php echo (int)$question['review_count']; ?> reviews)</span>
+                                </div>
+                                <div class="meta-item">
+                                    <i class="fas fa-eye"></i>
+                                    <span data-resource-count="views"><?php echo (int)$question['views_count']; ?> views</span>
+                                </div>
+                                <div class="meta-item">
+                                    <i class="fas fa-download"></i>
+                                    <span data-resource-count="downloads"><?php echo (int)$question['download_count']; ?> downloads</span>
+                                </div>
+                                <div class="meta-item">
+                                    <i class="fas fa-user"></i>
+                                    <span><?php echo htmlspecialchars($question['added_by']); ?></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="resource-card-footer resource-interaction-actions">
+                            <button type="button" class="btn btn-primary" style="flex: 1;"
+                                    data-open-preview
+                                    data-preview-url="<?php echo htmlspecialchars($question['drive_link'], ENT_QUOTES, 'UTF-8'); ?>"
+                                    data-preview-title="<?php echo htmlspecialchars($question['title'], ENT_QUOTES, 'UTF-8'); ?>"
+                                    data-resource-id="<?php echo (int)$question['id']; ?>">
+                                <i class="fas fa-eye"></i> Preview
+                            </button>
+                            <a href="<?php echo htmlspecialchars(getResourceDownloadUrl((int)$question['id']), ENT_QUOTES, 'UTF-8'); ?>"
+                               class="btn btn-outline"
+                               aria-label="Download <?php echo htmlspecialchars($question['title'], ENT_QUOTES, 'UTF-8'); ?>">
+                                <i class="fas fa-download"></i> Download
+                            </a>
+                            <button type="button" class="btn btn-outline" data-open-review data-resource-id="<?php echo (int)$question['id']; ?>">
+                                <i class="fas fa-star"></i> Review
+                            </button>
+                        </div>
+                    </div>
+                <?php endforeach; ?>
             </div>
         <?php endif; ?>
     <?php endif; ?>
+</div>
+
+<!-- ============================================
+     FILE PREVIEW MODAL
+     ============================================ -->
+<div class="resource-preview" id="previewModal" role="dialog" aria-modal="true" aria-labelledby="previewTitle" aria-hidden="true">
+    <div class="resource-preview-panel">
+        <div class="resource-preview-header">
+            <h2 id="previewTitle">File Preview</h2>
+            <button type="button" data-close-preview aria-label="Close preview">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="resource-preview-body">
+            <iframe id="previewIframe" title="Resource preview" src="" allow="autoplay"></iframe>
+        </div>
+    </div>
+</div>
+
+<!-- Review Modal -->
+<div class="modal-overlay" id="reviewModal" role="dialog" aria-modal="true" aria-labelledby="reviewModalTitle" aria-hidden="true" style="display:none; position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.5); z-index:9999; align-items:center; justify-content:center;">
+    <div class="modal" style="background:#fff; padding:20px; border-radius:8px; width:90%; max-width:400px;">
+        <h3 id="reviewModalTitle" style="margin-top:0;">Rate this Resource</h3>
+        <input type="hidden" id="reviewResourceId">
+        
+        <div class="star-rating" role="group" aria-label="Select a rating from 1 to 5 stars" style="font-size: 30px; color: #F59E0B; cursor: pointer; margin-bottom: 15px;">
+            <?php for ($rating = 1; $rating <= 5; $rating++): ?>
+                <button type="button" data-rating="<?php echo $rating; ?>" aria-label="<?php echo $rating; ?> star<?php echo $rating === 1 ? '' : 's'; ?>"><i class="far fa-star"></i></button>
+            <?php endfor; ?>
+        </div>
+        
+        <textarea id="reviewText" class="form-control" rows="3" maxlength="4000" placeholder="Write your review (optional)..." style="width:100%; margin-bottom:15px;"></textarea>
+        
+        <div style="display:flex; justify-content:flex-end; gap:10px;">
+            <button type="button" class="btn btn-outline" data-close-review>Cancel</button>
+            <button type="button" class="btn btn-primary" id="submitReviewButton">Submit</button>
+        </div>
+        <p id="reviewMessage" role="status" style="margin:12px 0 0;" hidden></p>
+    </div>
 </div>
 
 <?php include_once BASE_PATH . '/includes/footer.php'; ?>

@@ -63,7 +63,7 @@ define('DB_CHARSET', 'utf8mb4');
 
 // Application Settings
 define('APP_NAME', 'ClassMate');
-define('APP_VERSION', '1.1.6');
+define('APP_VERSION', '1.2.0');
 define('APP_ENV', 'development'); // development, production
 
 // Security Settings

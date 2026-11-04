@@ -3,7 +3,7 @@
  * Provides offline support and caching
  */
 
-const CACHE_NAME = 'classmate-v2.2.4'; // ভার্সন আপডেট করা হলো যাতে নতুন ক্যাশ তৈরি হয়
+const CACHE_NAME = 'classmate-v2.2.8';
 const APP_ROOT = new URL('./', self.location.href).pathname;
 const OFFLINE_URL = APP_ROOT + 'offline.html';
 const appAsset = function(path) {
@@ -17,6 +17,7 @@ const ASSETS_TO_CACHE = [
   appAsset('assets/css/style.css'),
   appAsset('assets/css/components.css'),
   appAsset('assets/css/responsive.css'),
+  appAsset('assets/css/theme.css'),
   appAsset('assets/css/student.css'),
   appAsset('assets/js/main.js'),
   appAsset('assets/js/notifications.js'),

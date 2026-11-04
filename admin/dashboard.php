@@ -11,8 +11,8 @@ require_once BASE_PATH . '/includes/auth-middleware.php';
 Auth::requireAdmin();
 
 $pageTitle = 'Dashboard';
-$pageCss = ['admin.css', 'dashboard.css'];
-$pageJs = ['dashboard.js'];
+$pageCss = ['admin.css', 'dashboard.css', 'routine-dashboard.css'];
+$pageJs = ['dashboard.js', 'student-dashboard.js'];
 $isAdmin = true;
 
 $db = Database::getInstance();
@@ -40,8 +40,11 @@ foreach ($tables as $table) {
 // ============================================
 
 $today = date('Y-m-d');
+$tomorrow = date('Y-m-d', strtotime('+1 day'));
 $classStats = [];
 $todayClasses = ['total' => 0, 'scheduled' => 0, 'completed' => 0, 'cancelled' => 0, 'retaked' => 0];
+$todayRoutineClasses = [];
+$tomorrowRoutineClasses = [];
 $upcomingClasses = 0;
 
 try {
@@ -79,18 +82,63 @@ try {
         ];
     }
 
-    // Routine classes for today (safely check if table exists)
+    // Load today's and tomorrow's recurring routine classes.
     try {
-        $currentDay = date('l');
-        $routineSql = "SELECT COUNT(*) FROM class_routines WHERE day_of_week = ?" . ($isBatchAdmin ? " AND batch_id = ?" : "");
-        $stmt = $db->prepare($routineSql);
-        $stmt->execute($isBatchAdmin ? [$currentDay, $adminBatchId] : [$currentDay]);
-        $routineCount = (int)$stmt->fetchColumn();
+        [$routineBatchSql, $routineBatchParams] = Authorization::adminBatchFilter('cr');
+        $loadRoutineClasses = static function (string $classDate) use ($db, $routineBatchSql, $routineBatchParams): array {
+            $classDay = date('l', strtotime($classDate));
+            $stmt = $db->prepare("
+                SELECT
+                    cr.course_id,
+                    cr.class_code,
+                    cr.class_title,
+                    cr.start_time,
+                    cr.end_time,
+                    cr.room,
+                    cr.instructor,
+                    crs.course_title AS course_title,
+                    o.status AS occurrence_status
+                FROM class_routines cr
+                JOIN courses crs ON cr.course_id = crs.id
+                LEFT JOIN class_routine_occurrences o
+                    ON o.routine_id = cr.id AND o.class_date = ?
+                WHERE cr.day_of_week = ?" . $routineBatchSql . "
+                ORDER BY cr.start_time ASC
+            ");
+            $stmt->execute(array_merge([$classDate, $classDay], $routineBatchParams));
+            $classes = $stmt->fetchAll();
+            $now = time();
 
-        $todayClasses['total'] += $routineCount;
-        $todayClasses['scheduled'] += $routineCount;
+            foreach ($classes as &$class) {
+                if ($class['occurrence_status'] !== null && $class['occurrence_status'] !== 'scheduled') {
+                    $class['status'] = $class['occurrence_status'];
+                } elseif ($now >= strtotime($classDate . ' ' . $class['end_time'])) {
+                    $class['status'] = 'completed';
+                } elseif ($now >= strtotime($classDate . ' ' . $class['start_time'])) {
+                    $class['status'] = 'in_progress';
+                } else {
+                    $class['status'] = 'scheduled';
+                }
+            }
+            unset($class);
+
+            return $classes;
+        };
+
+        $todayRoutineClasses = $loadRoutineClasses($today);
+        $tomorrowRoutineClasses = $loadRoutineClasses($tomorrow);
+        $todayClasses['total'] += count($todayRoutineClasses);
+        $todayClasses['scheduled'] += count(array_filter($todayRoutineClasses, static function ($class) {
+            return $class['status'] === 'scheduled';
+        }));
+        $todayClasses['completed'] += count(array_filter($todayRoutineClasses, static function ($class) {
+            return $class['status'] === 'completed';
+        }));
+        $todayClasses['cancelled'] += count(array_filter($todayRoutineClasses, static function ($class) {
+            return $class['status'] === 'cancelled';
+        }));
     } catch (Throwable $e) {
-        // Table or column might not exist yet
+        error_log('Admin Dashboard (Routine classes): ' . $e->getMessage());
     }
 
     // Upcoming classes
@@ -380,16 +428,6 @@ $statCards = [
 include_once BASE_PATH . '/includes/header.php';
 ?>
 
-    <!-- ===== DEBUG: Missing Tables Warning ===== -->
-    <?php if (!empty($missingTables)): ?>
-    <div class="alert alert-warning" style="margin-bottom: 20px;">
-        <i class="fas fa-exclamation-triangle"></i>
-        <strong>Database Tables Missing:</strong> 
-        The following tables were not found: <?php echo implode(', ', $missingTables); ?>
-        <br><small>Please import the database schema to see real data.</small>
-    </div>
-    <?php endif; ?>
-    
     <!-- ===== Welcome Banner ===== -->
     <div class="dashboard-welcome">
         <div class="welcome-content">
@@ -403,6 +441,119 @@ include_once BASE_PATH . '/includes/header.php';
             </div>
         </div>
     </div>
+
+    <!-- ===== Today's and Tomorrow's Routine ===== -->
+    <div class="admin-routine-grid">
+        <?php foreach ([
+            ['name' => 'Today', 'date' => $today, 'classes' => $todayRoutineClasses, 'cardId' => 'admin-today-routine-card'],
+            ['name' => 'Tomorrow', 'date' => $tomorrow, 'classes' => $tomorrowRoutineClasses, 'cardId' => 'admin-tomorrow-routine-card']
+        ] as $routineDay): ?>
+            <div class="card routine-schedule-card routine-download-card" id="<?php echo $routineDay['cardId']; ?>"
+                data-routine-date="<?php echo htmlspecialchars($routineDay['date']); ?>"
+                data-routine-name="<?php echo htmlspecialchars($routineDay['name']); ?>">
+                <div class="card-header">
+                    <div class="routine-header-main">
+                        <div class="routine-card-heading">
+                            <span class="routine-heading-icon"><i class="fas fa-calendar-day"></i></span>
+                            <div>
+                                <h3 class="card-title"><?php echo htmlspecialchars($routineDay['name']); ?>'s <span>Classes</span></h3>
+                                <p><?php echo date('l, F d, Y', strtotime($routineDay['date'])); ?></p>
+                            </div>
+                        </div>
+                        <i class="far fa-calendar routine-header-calendar" aria-hidden="true"></i>
+                    </div>
+                    <div class="routine-card-actions">
+                        <span class="routine-class-count"><?php echo count($routineDay['classes']); ?> <?php echo count($routineDay['classes']) === 1 ? 'class' : 'classes'; ?> scheduled</span>
+                        <button type="button" class="btn btn-sm btn-outline download-routine-button"
+                            aria-label="Download <?php echo strtolower(htmlspecialchars($routineDay['name'])); ?>'s classes as an image">
+                            <i class="fas fa-download"></i><span>Download image</span>
+                        </button>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <?php if (empty($routineDay['classes'])): ?>
+                        <div class="empty-state">
+                            <i class="fas fa-calendar-check"></i>
+                            <h4>No classes scheduled</h4>
+                            <p>There are no classes on the timetable for <?php echo strtolower(htmlspecialchars($routineDay['name'])); ?>.</p>
+                        </div>
+                    <?php else: ?>
+                        <div class="routine-class-list">
+                            <?php foreach ($routineDay['classes'] as $class): ?>
+                                <?php
+                                $statusLabels = [
+                                    'scheduled' => 'Scheduled',
+                                    'in_progress' => 'In Progress',
+                                    'completed' => 'Completed',
+                                    'cancelled' => 'Cancelled'
+                                ];
+                                $statusClasses = [
+                                    'scheduled' => 'routine-status-scheduled',
+                                    'in_progress' => 'routine-status-live',
+                                    'completed' => 'routine-status-completed',
+                                    'cancelled' => 'routine-status-cancelled'
+                                ];
+                                ?>
+                                <article class="routine-class-item routine-download-item"
+                                    data-auto-status="<?php echo in_array($class['occurrence_status'], [null, 'scheduled'], true) ? 'true' : 'false'; ?>"
+                                    data-start-at="<?php echo strtotime($routineDay['date'] . ' ' . $class['start_time']); ?>"
+                                    data-end-at="<?php echo strtotime($routineDay['date'] . ' ' . $class['end_time']); ?>"
+                                    data-course="<?php echo htmlspecialchars($class['course_title'], ENT_QUOTES, 'UTF-8'); ?>"
+                                    data-title="<?php echo htmlspecialchars($class['class_title'], ENT_QUOTES, 'UTF-8'); ?>"
+                                    data-code="<?php echo htmlspecialchars($class['class_code'], ENT_QUOTES, 'UTF-8'); ?>"
+                                    data-instructor="<?php echo htmlspecialchars($class['instructor'], ENT_QUOTES, 'UTF-8'); ?>"
+                                    data-time="<?php echo htmlspecialchars(date('h:i A', strtotime($class['start_time'])) . ' - ' . date('h:i A', strtotime($class['end_time'])), ENT_QUOTES, 'UTF-8'); ?>"
+                                    data-room="<?php echo htmlspecialchars($class['room'] ?: 'TBA', ENT_QUOTES, 'UTF-8'); ?>">
+                                    <div class="routine-class-content">
+                                        <div class="routine-class-heading">
+                                            <span class="routine-course-icon"><i class="fas fa-graduation-cap"></i></span>
+                                            <div class="routine-title-group">
+                                                <h4><?php echo htmlspecialchars($class['course_title']); ?></h4>
+                                                <p><?php echo htmlspecialchars($class['class_title']); ?></p>
+                                            </div>
+                                            <span class="routine-status <?php echo $statusClasses[$class['status']] ?? 'routine-status-scheduled'; ?>" data-routine-status>
+                                                <i class="far fa-clock" aria-hidden="true"></i><?php echo $statusLabels[$class['status']] ?? 'Scheduled'; ?>
+                                            </span>
+                                        </div>
+                                        <div class="routine-class-details">
+                                            <div class="routine-detail">
+                                                <i class="far fa-calendar" aria-hidden="true"></i>
+                                                <div><span>Class code</span><strong><?php echo htmlspecialchars($class['class_code']); ?></strong></div>
+                                            </div>
+                                            <div class="routine-detail routine-detail-time">
+                                                <i class="far fa-clock" aria-hidden="true"></i>
+                                                <div><span>Time</span><strong><?php echo date('h:i A', strtotime($class['start_time'])); ?> - <?php echo date('h:i A', strtotime($class['end_time'])); ?></strong></div>
+                                            </div>
+                                        </div>
+                                        <div class="routine-class-footer">
+                                            <div class="routine-detail routine-detail-room">
+                                                <i class="fas fa-map-marker-alt" aria-hidden="true"></i>
+                                                <div><span>Room</span><strong><?php echo htmlspecialchars($class['room'] ?: 'TBA'); ?></strong></div>
+                                            </div>
+                                            <div class="routine-detail routine-detail-teacher">
+                                                <i class="fas fa-user" aria-hidden="true"></i>
+                                                <div><span>Teacher</span><strong><?php echo htmlspecialchars($class['instructor']); ?></strong></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </article>
+                            <?php endforeach; ?>
+                        </div>
+                    <?php endif; ?>
+                </div>
+            </div>
+        <?php endforeach; ?>
+    </div>
+
+    <!-- ===== DEBUG: Missing Tables Warning ===== -->
+    <?php if (!empty($missingTables)): ?>
+    <div class="alert alert-warning" style="margin-bottom: 20px;">
+        <i class="fas fa-exclamation-triangle"></i>
+        <strong>Database Tables Missing:</strong> 
+        The following tables were not found: <?php echo implode(', ', $missingTables); ?>
+        <br><small>Please import the database schema to see real data.</small>
+    </div>
+    <?php endif; ?>
     
     <!-- ===== Quick Stats Row ===== -->
     <div class="quick-stats">

@@ -10,6 +10,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?php echo isset($pageTitle) ? $pageTitle . ' - ' . APP_NAME : APP_NAME; ?></title>
+    <script>
+        (function () {
+            try {
+                if (localStorage.getItem('classmate-theme') === 'dark') {
+                    document.documentElement.dataset.theme = 'dark';
+                }
+            } catch (error) {
+                console.warn('Unable to read the saved theme preference.', error);
+            }
+        })();
+    </script>
     
     <!-- Favicon -->
     <link rel="icon" href="<?php echo asset('icons/favicon.ico'); ?>" type="image/x-icon">
@@ -30,8 +41,8 @@
         "short_name": "ClassMate",
         "start_url": "/",
         "display": "standalone",
-        "background_color": "#4F46E5",
-        "theme_color": "#4F46E5",
+        "background_color": "#0F766E",
+        "theme_color": "#0F766E",
         "icons": [
             {
                 "src": "/assets/icons/web-app-manifest-192x192.png",
@@ -86,10 +97,11 @@
         echo '<link rel="stylesheet" href="' . asset('css/student.css') . '?v=' . APP_VERSION . '">';
     }
     ?>
+    <link rel="stylesheet" href="<?php echo asset('css/theme.css') . '?v=' . APP_VERSION; ?>">
     <!-- ===== PWA META TAGS ===== -->
     <!-- Basic PWA Meta -->
    
-    <meta name="theme-color" content="#4F46E5">
+    <meta name="theme-color" content="#0F766E">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="apple-mobile-web-app-title" content="ClassMate">
@@ -574,6 +586,10 @@ function showToast(message, type) {
                     
                     <!-- ===== Header Actions ===== -->
                     <div class="header-actions">
+                        <button type="button" class="action-btn theme-toggle" data-theme-toggle
+                                aria-label="Switch to dark mode" title="Switch to dark mode">
+                            <i class="fas fa-moon" aria-hidden="true"></i>
+                        </button>
                         <!-- ===== Notifications ===== -->
 <?php 
 $unreadCount = 0;
@@ -822,6 +838,10 @@ if (Auth::isLoggedIn()) {
                     <div class="search-results" id="searchResults"></div>
                 </div>
                 <div class="header-actions">
+                    <button type="button" class="action-btn theme-toggle" data-theme-toggle
+                            aria-label="Switch to dark mode" title="Switch to dark mode">
+                        <i class="fas fa-moon" aria-hidden="true"></i>
+                    </button>
                     <a href="<?php echo url('auth/login.php'); ?>" class="btn btn-sm btn-primary">Login</a>
                     <a href="<?php echo url('auth/register.php'); ?>" class="btn btn-sm" style="margin-left:8px;">Register</a>
                 </div>

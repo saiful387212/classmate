@@ -5,14 +5,16 @@
 document.addEventListener('DOMContentLoaded', function() {
     'use strict';
 
-    const tomorrowCard = document.getElementById('tomorrow-routine-card');
-    const downloadButton = document.getElementById('download-tomorrow-routine');
+    const tomorrowCard = document.querySelector('#tomorrow-routine-card, #admin-tomorrow-routine-card');
 
-    if (downloadButton && tomorrowCard) {
-        downloadButton.addEventListener('click', function() {
-            downloadRoutineCard(tomorrowCard);
+    document.querySelectorAll('.download-routine-button').forEach(function(button) {
+        button.addEventListener('click', function() {
+            const card = button.closest('.routine-download-card');
+            if (card) {
+                downloadRoutineCard(card);
+            }
         });
-    }
+    });
 
     updateRoutineStatuses();
     window.setInterval(updateRoutineStatuses, 30000);
@@ -27,6 +29,22 @@ document.addEventListener('DOMContentLoaded', function() {
                 String(tomorrow.getDate()).padStart(2, '0')
             ].join('-');
             if (tomorrowCard.dataset.routineDate !== expectedDate) {
+                window.location.reload();
+            }
+        }, 60000);
+    }
+
+    const weeklyRoutineGrid = document.querySelector('.admin-routine-grid[data-week-start]');
+    if (weeklyRoutineGrid) {
+        window.setInterval(function() {
+            const sunday = new Date();
+            sunday.setDate(sunday.getDate() - sunday.getDay());
+            const expectedWeekStart = [
+                sunday.getFullYear(),
+                String(sunday.getMonth() + 1).padStart(2, '0'),
+                String(sunday.getDate()).padStart(2, '0')
+            ].join('-');
+            if (weeklyRoutineGrid.dataset.weekStart !== expectedWeekStart) {
                 window.location.reload();
             }
         }, 60000);
@@ -125,7 +143,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
 
         const completedCount = document.querySelector('[data-today-completed-count]');
-        const todayCard = document.getElementById('today-routine-card');
+        const todayCard = document.querySelector('#today-routine-card, #admin-today-routine-card');
         if (completedCount && todayCard) {
             const completed = Array.from(todayCard.querySelectorAll('[data-routine-status]'))
                 .filter(function(status) { return status.textContent.trim() === 'Completed'; }).length;
@@ -146,6 +164,10 @@ document.addEventListener('DOMContentLoaded', function() {
         canvas.height = height * scale;
         const context = canvas.getContext('2d');
         if (!context) return;
+
+        const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent) ||
+            (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+        const imageWindow = isMobile ? window.open('', '_blank') : null;
 
         context.scale(scale, scale);
         context.fillStyle = '#f3f6fb';
@@ -168,7 +190,8 @@ document.addEventListener('DOMContentLoaded', function() {
         context.fillText('▦', padding, 75);
         context.fillStyle = '#ffffff';
         context.font = '700 29px Arial, sans-serif';
-        context.fillText("Tomorrow's Classes", padding + 54, 64, width - 190);
+        const routineName = card.dataset.routineName || 'Class';
+        context.fillText(routineName + "'s Classes", padding + 54, 64, width - 190);
         context.fillStyle = '#5eead4';
         context.fillRect(padding + 54, 74, 112, 3);
         context.fillStyle = '#cbd9eb';
@@ -184,7 +207,7 @@ document.addEventListener('DOMContentLoaded', function() {
             context.fill();
             context.fillStyle = '#475569';
             context.font = '18px Arial, sans-serif';
-            context.fillText('No classes scheduled for tomorrow.', padding + 20, headerHeight + 78);
+            context.fillText('No classes scheduled for ' + routineName.toLowerCase() + '.', padding + 20, headerHeight + 78);
         }
 
         items.forEach(function(item, index) {
@@ -291,9 +314,27 @@ document.addEventListener('DOMContentLoaded', function() {
         context.fillText('ClassMate - Your class schedule', padding, height - 27);
 
         const link = document.createElement('a');
-        link.download = 'tomorrow-classes-' + card.dataset.routineDate + '.png';
+        link.download = routineName.toLowerCase() + '-classes-' + card.dataset.routineDate + '.png';
         link.href = canvas.toDataURL('image/png');
+
+        if (imageWindow) {
+            imageWindow.document.title = link.download;
+            imageWindow.document.body.style.cssText = 'margin:0;background:#0b1f33;display:grid;place-items:center;min-height:100vh;';
+            const image = imageWindow.document.createElement('img');
+            image.src = link.href;
+            image.alt = 'Class schedule. Press and hold the image to save it.';
+            image.style.cssText = 'display:block;width:100%;height:auto;max-height:100vh;object-fit:contain;';
+            imageWindow.document.body.appendChild(image);
+            if (typeof showToast === 'function') {
+                showToast('Press and hold the schedule image, then choose Save Image or Download.', 'info');
+            }
+            return;
+        }
+
         link.click();
+        if (isMobile && typeof showToast === 'function') {
+            showToast('If the image opens in a new tab, press and hold it to save.', 'info');
+        }
     }
 
     function drawCalendarIcon(context, x, y, color) {

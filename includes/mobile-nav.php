@@ -19,6 +19,10 @@
                     <i class="fas fa-book"></i>
                     <span>Classes</span>
                 </a>
+                <a href="<?php echo url('discussion.php?mode=batch-chat'); ?>" class="mobile-nav-item <?php echo isActivePage('discussion.php') && ($_GET['mode'] ?? '') === 'batch-chat' ? 'active' : ''; ?>">
+                    <i class="fas fa-comments"></i>
+                    <span>Chat</span>
+                </a>
                 <a href="<?php echo url('admin/assignments.php'); ?>" class="mobile-nav-item <?php echo isActivePage('admin/assignments.php') ? 'active' : ''; ?>">
                     <i class="fas fa-tasks"></i>
                     <span>Tasks</span>
@@ -31,6 +35,10 @@
                 <a href="<?php echo url('student/classes.php'); ?>" class="mobile-nav-item <?php echo isActivePage('student/classes.php') ? 'active' : ''; ?>">
                     <i class="fas fa-book"></i>
                     <span>Classes</span>
+                </a>
+                <a href="<?php echo url('discussion.php?mode=batch-chat'); ?>" class="mobile-nav-item <?php echo isActivePage('discussion.php') && ($_GET['mode'] ?? '') === 'batch-chat' ? 'active' : ''; ?>">
+                    <i class="fas fa-comments"></i>
+                    <span>Chat</span>
                 </a>
                 <a href="<?php echo url('student/assignments.php'); ?>" class="mobile-nav-item <?php echo isActivePage('student/assignments.php') ? 'active' : ''; ?>">
                     <i class="fas fa-tasks"></i>

@@ -8,6 +8,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // ===== Initialize Components =====
     initSidebar();
+    initTheme();
     initDropdowns();
     initTabs();
     initModals();
@@ -17,6 +18,39 @@ document.addEventListener('DOMContentLoaded', function() {
     initMobileNav();
     initSearch();
     initFileUpload();
+
+    function initTheme() {
+        const toggles = document.querySelectorAll('[data-theme-toggle]');
+        if (!toggles.length) return;
+
+        function applyTheme(theme) {
+            document.documentElement.dataset.theme = theme;
+            const isDark = theme === 'dark';
+            toggles.forEach(function (toggle) {
+                const label = isDark ? 'Switch to light mode' : 'Switch to dark mode';
+                toggle.setAttribute('aria-label', label);
+                toggle.setAttribute('title', label);
+                toggle.innerHTML = '<i class="fas ' + (isDark ? 'fa-sun' : 'fa-moon') + '" aria-hidden="true"></i>';
+            });
+            document.querySelectorAll('meta[name="theme-color"]').forEach(function (meta) {
+                meta.setAttribute('content', isDark ? '#0B1726' : '#0F766E');
+            });
+        }
+
+        applyTheme(document.documentElement.dataset.theme === 'dark' ? 'dark' : 'light');
+        toggles.forEach(function (toggle) {
+            toggle.addEventListener('click', function () {
+                const nextTheme = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark';
+                applyTheme(nextTheme);
+                try {
+                    localStorage.setItem('classmate-theme', nextTheme);
+                } catch (error) {
+                    console.warn('Unable to save the theme preference.', error);
+                    toggle.setAttribute('aria-label', nextTheme === 'dark' ? 'Dark mode enabled for this page' : 'Light mode enabled for this page');
+                }
+            });
+        });
+    }
     
     // ===== Sidebar Toggle =====
     function initSidebar() {
@@ -516,3 +550,166 @@ function togglePinVisibility(inputId = 'pin') {
         toggleBtn.className = 'fas fa-eye';
     }
 }
+
+// Batch chat uses this shared bundle because some hosts block page-specific assets.
+(function initializeBatchChat() {
+    const root = document.getElementById('batchChat');
+    if (!root) return;
+
+    const list = document.getElementById('batchChatMessages');
+    const status = document.getElementById('batchChatStatus');
+    const form = document.getElementById('batchChatForm');
+    const input = document.getElementById('batchChatInput');
+    const sendButton = document.getElementById('batchChatSend');
+    const endpoint = root.dataset.endpoint;
+    const csrfToken = root.dataset.csrf;
+    const batchId = Number(root.dataset.batchId) || 0;
+    const currentUserId = Number(root.dataset.userId) || 0;
+    const currentUserType = root.dataset.userType || '';
+    let lastId = 0;
+    let isLoading = false;
+    let isSending = false;
+
+    function appendMessage(message) {
+        if (status) status.remove();
+
+        const item = document.createElement('article');
+        const isOwnMessage = Number(message.sender_id) === currentUserId && message.sender_type === currentUserType;
+        item.className = 'batch-chat-message' + (isOwnMessage ? ' is-own' : '');
+
+        const meta = document.createElement('div');
+        meta.className = 'batch-chat-message-meta';
+
+        const author = document.createElement('strong');
+        author.textContent = message.sender_name || 'Batch member';
+        meta.appendChild(author);
+
+        const role = document.createElement('span');
+        role.className = 'batch-chat-role';
+        role.textContent = message.sender_type === 'admin' ? 'Admin' : 'Student';
+        meta.appendChild(role);
+
+        const time = document.createElement('time');
+        time.dateTime = message.created_at;
+        const parsedDate = new Date(String(message.created_at).replace(' ', 'T'));
+        time.textContent = Number.isNaN(parsedDate.getTime())
+            ? ''
+            : parsedDate.toLocaleString([], { dateStyle: 'short', timeStyle: 'short' });
+        meta.appendChild(time);
+
+        const content = document.createElement('p');
+        content.className = 'batch-chat-message-content';
+        content.textContent = message.content;
+
+        item.append(meta, content);
+        list.appendChild(item);
+        lastId = Math.max(lastId, Number(message.id) || 0);
+
+        while (list.children.length > 250) {
+            list.removeChild(list.firstElementChild);
+        }
+    }
+
+    async function loadMessages(initial) {
+        if (isLoading || !batchId) return;
+        isLoading = true;
+        const wasNearBottom = list.scrollHeight - list.scrollTop - list.clientHeight < 100;
+
+        try {
+            const query = new URLSearchParams({
+                mode: 'batch-chat-api',
+                action: 'messages',
+                batch_id: String(batchId),
+                after: String(initial ? 0 : lastId)
+            });
+            const response = await fetch(endpoint + '?' + query.toString(), {
+                credentials: 'same-origin',
+                cache: 'no-store',
+                headers: { Accept: 'application/json' }
+            });
+            const result = await response.json();
+            if (!response.ok || !result.success) {
+                throw new Error(result.message || 'Unable to load batch messages.');
+            }
+
+            if (!result.messages.length && initial && status) {
+                status.textContent = 'No messages yet. Start the conversation!';
+            } else {
+                result.messages.forEach(appendMessage);
+            }
+            if (status && status.classList.contains('batch-chat-error')) {
+                if (lastId > 0) {
+                    status.remove();
+                } else {
+                    status.textContent = 'No messages yet. Start the conversation!';
+                    status.classList.remove('batch-chat-error');
+                }
+            }
+            if (wasNearBottom || initial) list.scrollTop = list.scrollHeight;
+        } catch (error) {
+            if (status) {
+                status.textContent = error.message || 'Unable to load batch messages. Please retry.';
+                status.classList.add('batch-chat-error');
+                if (!status.isConnected) list.prepend(status);
+            }
+        } finally {
+            isLoading = false;
+        }
+    }
+
+    form.addEventListener('submit', async function (event) {
+        event.preventDefault();
+        const content = input.value.trim();
+        if (!content || isSending || !batchId) return;
+
+        isSending = true;
+        sendButton.disabled = true;
+        try {
+            const response = await fetch(endpoint + '?mode=batch-chat-api&action=send', {
+                method: 'POST',
+                credentials: 'same-origin',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Accept: 'application/json'
+                },
+                body: JSON.stringify({ content: content, csrf_token: csrfToken, batch_id: batchId })
+            });
+            const result = await response.json();
+            if (!response.ok || !result.success) {
+                throw new Error(result.message || 'Unable to send your message.');
+            }
+
+            input.value = '';
+            if (result.message) {
+                appendMessage(result.message);
+                list.scrollTop = list.scrollHeight;
+            }
+            await loadMessages(false);
+            input.focus();
+        } catch (error) {
+            if (status) {
+                status.textContent = error.message || 'Unable to send your message. Please try again.';
+                status.classList.add('batch-chat-error');
+                if (!status.isConnected) list.prepend(status);
+            }
+        } finally {
+            isSending = false;
+            sendButton.disabled = false;
+        }
+    });
+
+    input.addEventListener('keydown', function (event) {
+        if (event.key === 'Enter' && !event.shiftKey) {
+            event.preventDefault();
+            form.requestSubmit();
+        }
+    });
+
+    loadMessages(true);
+    window.setInterval(function () {
+        if (!document.hidden) loadMessages(false);
+    }, 4000);
+    document.addEventListener('visibilitychange', function () {
+        if (!document.hidden) loadMessages(false);
+    });
+})();

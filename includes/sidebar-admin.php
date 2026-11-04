@@ -71,6 +71,12 @@
                     <span>Assignments</span>
                 </a>
             </li>
+            <li class="nav-item <?php echo isActivePage('discussion.php') && ($_GET['mode'] ?? '') === 'batch-chat' ? 'active' : ''; ?>">
+                <a href="<?php echo url('discussion.php?mode=batch-chat'); ?>" class="nav-link">
+                    <i class="fas fa-comments"></i>
+                    <span>Batch Chat</span>
+                </a>
+            </li>
             <li class="nav-item <?php echo isActivePage('admin/resources.php') ? 'active' : ''; ?>">
     <a href="<?php echo url('admin/resources.php'); ?>" class="nav-link">
         <i class="fas fa-folder-open"></i>

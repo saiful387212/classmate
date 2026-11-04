@@ -526,10 +526,24 @@ include_once BASE_PATH . '/includes/header.php';
         <div class="dashboard-column">
             
             <!-- ===== Today's Classes ===== -->
-            <div class="card routine-schedule-card" id="today-routine-card" data-routine-date="<?php echo htmlspecialchars($today); ?>">
+            <div class="card routine-schedule-card routine-download-card" id="today-routine-card" data-routine-date="<?php echo htmlspecialchars($today); ?>" data-routine-name="Today">
                 <div class="card-header">
-                    <h3 class="card-title"><i class="fas fa-calendar-day text-primary"></i> Today's Classes</h3>
-                    <span class="badge badge-primary"><?php echo count($todayClasses); ?> Classes</span>
+                    <div class="routine-header-main">
+                        <div class="routine-card-heading">
+                            <span class="routine-heading-icon"><i class="fas fa-calendar-day"></i></span>
+                            <div>
+                                <h3 class="card-title">Today's <span>Classes</span></h3>
+                                <p><?php echo date('l, F d, Y', strtotime($today)); ?></p>
+                            </div>
+                        </div>
+                        <i class="far fa-calendar routine-header-calendar" aria-hidden="true"></i>
+                    </div>
+                    <div class="routine-card-actions">
+                        <span class="routine-class-count"><?php echo count($todayClasses); ?> <?php echo count($todayClasses) === 1 ? 'class' : 'classes'; ?> scheduled</span>
+                        <button type="button" class="btn btn-sm btn-outline download-routine-button" aria-label="Download today's classes as an image">
+                            <i class="fas fa-download"></i><span>Download image</span>
+                        </button>
+                    </div>
                 </div>
                 <div class="card-body">
                     <?php if (empty($todayClasses)): ?>
@@ -555,20 +569,47 @@ include_once BASE_PATH . '/includes/header.php';
                                     'cancelled' => 'routine-status-cancelled'
                                 ];
                                 ?>
-                                <article class="routine-class-item" data-auto-status="<?php echo in_array($class['occurrence_status'], [null, 'scheduled'], true) ? 'true' : 'false'; ?>"
+                                <article class="routine-class-item routine-download-item" data-auto-status="<?php echo in_array($class['occurrence_status'], [null, 'scheduled'], true) ? 'true' : 'false'; ?>"
                                     data-start-at="<?php echo strtotime($today . ' ' . $class['start_time']); ?>"
-                                    data-end-at="<?php echo strtotime($today . ' ' . $class['end_time']); ?>">
+                                    data-end-at="<?php echo strtotime($today . ' ' . $class['end_time']); ?>"
+                                    data-course="<?php echo htmlspecialchars($class['crs_course_title'], ENT_QUOTES, 'UTF-8'); ?>"
+                                    data-title="<?php echo htmlspecialchars($class['class_title'], ENT_QUOTES, 'UTF-8'); ?>"
+                                    data-code="<?php echo htmlspecialchars($class['class_code'], ENT_QUOTES, 'UTF-8'); ?>"
+                                    data-instructor="<?php echo htmlspecialchars($class['instructor'], ENT_QUOTES, 'UTF-8'); ?>"
+                                    data-time="<?php echo htmlspecialchars(date('h:i A', strtotime($class['start_time'])) . ' - ' . date('h:i A', strtotime($class['end_time'])), ENT_QUOTES, 'UTF-8'); ?>"
+                                    data-room="<?php echo htmlspecialchars($class['room'] ?: 'TBA', ENT_QUOTES, 'UTF-8'); ?>">
                                     <div class="routine-class-content">
-                                        <h4><?php echo htmlspecialchars($class['class_title']); ?>
-                                            <span class="class-code"><?php echo htmlspecialchars($class['class_code']); ?></span>
-                                        </h4>
-                                        <div class="routine-class-meta">
-                                            <span class="routine-time"><i class="fas fa-clock"></i> <?php echo date('h:i A', strtotime($class['start_time'])); ?> - <?php echo date('h:i A', strtotime($class['end_time'])); ?></span>
-                                            <span><i class="fas fa-user-tie"></i> <?php echo htmlspecialchars($class['instructor']); ?></span>
-                                            <span><i class="fas fa-map-marker-alt"></i> <?php echo htmlspecialchars($class['room'] ?: 'TBA'); ?></span>
+                                        <div class="routine-class-heading">
+                                            <span class="routine-course-icon"><i class="fas fa-graduation-cap"></i></span>
+                                            <div class="routine-title-group">
+                                                <h4><?php echo htmlspecialchars($class['crs_course_title']); ?></h4>
+                                                <p><?php echo htmlspecialchars($class['class_title']); ?></p>
+                                            </div>
+                                            <span class="routine-status <?php echo $statusClasses[$class['status']]; ?>" data-routine-status>
+                                                <i class="far fa-clock" aria-hidden="true"></i><?php echo $statusLabels[$class['status']]; ?>
+                                            </span>
+                                        </div>
+                                        <div class="routine-class-details">
+                                            <div class="routine-detail">
+                                                <i class="far fa-calendar" aria-hidden="true"></i>
+                                                <div><span>Class code</span><strong><?php echo htmlspecialchars($class['class_code']); ?></strong></div>
+                                            </div>
+                                            <div class="routine-detail routine-detail-time">
+                                                <i class="far fa-clock" aria-hidden="true"></i>
+                                                <div><span>Time</span><strong><?php echo date('h:i A', strtotime($class['start_time'])); ?> - <?php echo date('h:i A', strtotime($class['end_time'])); ?></strong></div>
+                                            </div>
+                                        </div>
+                                        <div class="routine-class-footer">
+                                            <div class="routine-detail routine-detail-room">
+                                                <i class="fas fa-map-marker-alt" aria-hidden="true"></i>
+                                                <div><span>Room</span><strong><?php echo htmlspecialchars($class['room'] ?: 'TBA'); ?></strong></div>
+                                            </div>
+                                            <div class="routine-detail routine-detail-teacher">
+                                                <i class="fas fa-user" aria-hidden="true"></i>
+                                                <div><span>Teacher</span><strong><?php echo htmlspecialchars($class['instructor']); ?></strong></div>
+                                            </div>
                                         </div>
                                     </div>
-                                    <span class="routine-status <?php echo $statusClasses[$class['status']]; ?>" data-routine-status><?php echo $statusLabels[$class['status']]; ?></span>
                                 </article>
                             <?php endforeach; ?>
                         </div>
@@ -577,7 +618,7 @@ include_once BASE_PATH . '/includes/header.php';
             </div>
 
             <!-- ===== Tomorrow's Classes ===== -->
-            <div class="card routine-schedule-card tomorrow-routine-card" id="tomorrow-routine-card" data-routine-date="<?php echo htmlspecialchars($tomorrow); ?>">
+            <div class="card routine-schedule-card routine-download-card" id="tomorrow-routine-card" data-routine-date="<?php echo htmlspecialchars($tomorrow); ?>" data-routine-name="Tomorrow">
                 <div class="card-header">
                     <div class="routine-header-main">
                         <div class="routine-card-heading">
@@ -591,7 +632,7 @@ include_once BASE_PATH . '/includes/header.php';
                     </div>
                     <div class="routine-card-actions">
                         <span class="routine-class-count"><?php echo count($tomorrowClasses); ?> <?php echo count($tomorrowClasses) === 1 ? 'class' : 'classes'; ?> scheduled</span>
-                        <button type="button" class="btn btn-sm btn-outline" id="download-tomorrow-routine" aria-label="Download tomorrow's classes as an image">
+                        <button type="button" class="btn btn-sm btn-outline download-routine-button" aria-label="Download tomorrow's classes as an image">
                             <i class="fas fa-download"></i><span>Download image</span>
                         </button>
                     </div>

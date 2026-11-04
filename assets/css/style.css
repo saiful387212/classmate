@@ -6,14 +6,14 @@
 /* ===== CSS Variables ===== */
 :root {
     /* Primary Colors */
-    --primary: #4F46E5;
-    --primary-dark: #4338CA;
-    --primary-light: #818CF8;
-    --primary-bg: #EEF2FF;
+    --primary: #0F766E;
+    --primary-dark: #115E59;
+    --primary-light: #2DD4BF;
+    --primary-bg: #CCFBF1;
     
     /* Secondary Colors */
-    --secondary: #7C3AED;
-    --secondary-light: #A78BFA;
+    --secondary: #164E63;
+    --secondary-light: #0891B2;
     
     /* Success Colors */
     --success: #10B981;
@@ -47,9 +47,9 @@
     --gray-900: #111827;
     
     /* Background Colors */
-    --bg-body: #F3F4F6;
+    --bg-body: #F1F5F9;
     --bg-white: #FFFFFF;
-    --bg-sidebar: #1F2937;
+    --bg-sidebar: #0B1F33;
     --bg-header: #FFFFFF;
     
     /* Text Colors */
@@ -59,7 +59,7 @@
     --text-white: #FFFFFF;
     
     /* Border Colors */
-    --border-color: #E5E7EB;
+    --border-color: #DCE5EC;
     --border-radius: 8px;
     --border-radius-lg: 12px;
     --border-radius-sm: 4px;
