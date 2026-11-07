@@ -130,7 +130,7 @@ $stmt->execute($params);
 $polls = $stmt->fetchAll();
 
 // Get status counts (batch-scoped)
-$countSql = "SELECT status, COUNT(*) as count FROM polls WHERE 1=1" . $batchSql . " GROUP BY status";
+$countSql = "SELECT p.status, COUNT(*) as count FROM polls p WHERE 1=1" . $batchSql . " GROUP BY p.status";
 $stmtC = $db->prepare($countSql);
 $stmtC->execute($batchParams);
 $statusCounts = [];

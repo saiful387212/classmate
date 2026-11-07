@@ -159,9 +159,14 @@ include_once BASE_PATH . '/includes/sidebar-admin.php';
                 <h1>Fund Events</h1>
                 <p class="text-muted">Manage class fund events and transactions</p>
             </div>
-            <a href="<?php echo url('admin/add-fund-event.php'); ?>" class="btn btn-primary">
-                <i class="fas fa-plus"></i> Create Fund Event
-            </a>
+            <div class="page-actions">
+                <a href="<?php echo url('admin/export-data.php?type=fund'); ?>" class="btn btn-secondary">
+                    <i class="fas fa-file-csv"></i> Export Fund CSV
+                </a>
+                <a href="<?php echo url('admin/add-fund-event.php'); ?>" class="btn btn-primary">
+                    <i class="fas fa-plus"></i> Create Fund Event
+                </a>
+            </div>
         </div>
     </div>
     

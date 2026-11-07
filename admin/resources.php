@@ -266,7 +266,7 @@ include_once BASE_PATH . '/includes/sidebar-admin.php';
     <!-- ============================================
     ADD RESOURCE FORM
     ============================================ -->
-    <div class="card" id="addResourceForm" style="display:none;">
+    <div class="card" id="addResourceCard" style="display:none;">
         <div class="card-header">
             <h3 class="card-title"><i class="fas fa-plus-circle text-primary"></i> Add New Resource</h3>
             <button class="btn btn-sm btn-outline" onclick="toggleAddForm()">
@@ -274,7 +274,7 @@ include_once BASE_PATH . '/includes/sidebar-admin.php';
             </button>
         </div>
         <div class="card-body">
-            <form method="POST" action="" id="resourceForm">
+            <form method="POST" action="" id="addResourceForm">
                 <?php echo Security::csrfField(); ?>
                 <input type="hidden" name="action" value="add_resource">
 
@@ -381,9 +381,9 @@ include_once BASE_PATH . '/includes/sidebar-admin.php';
                     </div>
                     
                     <div class="form-group">
-                        <label for="title">Title <span class="required">*</span></label>
-                        <input type="text" id="title" name="title" class="form-control" 
-                               placeholder="e.g., Soil Profile & Soil Horizons" required>
+                        <label for="title">Resource Title <span class="text-danger">*</span></label>
+                        <input type="text" id="title" name="title" class="form-control"
+                               placeholder="e.g., Soil Profile Notes" required>
                     </div>
                     
                     <div class="form-group" id="examTypeField" style="display:none;">
@@ -399,10 +399,14 @@ include_once BASE_PATH . '/includes/sidebar-admin.php';
                     </div>
                     
                     <div class="form-group">
-                        <label for="drive_link">Google Drive Link <span class="required">*</span></label>
-                        <input type="url" id="drive_link" name="drive_link" class="form-control" 
-                               placeholder="https://drive.google.com/file/d/..." required>
-                        <span class="form-help">Paste the Google Drive shareable link</span>
+                        <label for="drive_link">Google Drive Link <span class="text-danger">*</span></label>
+                        <div class="input-group">
+                            <input type="url" id="drive_link" name="drive_link" class="form-control"
+                                   placeholder="Paste Google Drive link here..."
+                                   onpaste="setTimeout(() => autoFillFromDrive(this.value), 100)"
+                                   onkeyup="autoFillFromDrive(this.value)" required>
+                        </div>
+                        <span class="form-help">Link paste করলেই নিচের টাইটেল অটোমেটিক বসে যাবে।</span>
                     </div>
                     
                     <div class="form-row">
@@ -575,10 +579,46 @@ include_once BASE_PATH . '/includes/sidebar-admin.php';
 
 <script>
 function toggleAddForm() {
-    const form = document.getElementById('addResourceForm');
+    const form = document.getElementById('addResourceCard');
     form.style.display = form.style.display === 'none' ? 'block' : 'none';
     if (form.style.display === 'block') {
         form.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+}
+
+function autoFillFromDrive(link) {
+    const titleInput = document.getElementById('title');
+    if (!titleInput) {
+        return;
+    }
+
+    const previousAutoTitle = titleInput.dataset.driveAutoFilledTitle || '';
+    if (titleInput.value.trim() && titleInput.value !== previousAutoTitle) {
+        return;
+    }
+
+    let extractedTitle = '';
+    try {
+        const driveUrl = new URL(link);
+        const filename = driveUrl.searchParams.get('filename')
+            || driveUrl.searchParams.get('file_name')
+            || driveUrl.pathname.split('/').pop();
+
+        if (filename && /\.[a-z0-9]{1,10}$/i.test(filename)) {
+            extractedTitle = decodeURIComponent(filename)
+                .replace(/\.[a-z0-9]{1,10}$/i, '')
+                .replace(/[+_-]+/g, ' ')
+                .trim();
+        }
+    } catch (error) {
+        extractedTitle = '';
+    }
+
+    titleInput.value = extractedTitle;
+    if (extractedTitle) {
+        titleInput.dataset.driveAutoFilledTitle = extractedTitle;
+    } else {
+        delete titleInput.dataset.driveAutoFilledTitle;
     }
 }
 

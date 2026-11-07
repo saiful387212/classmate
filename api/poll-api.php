@@ -41,6 +41,18 @@ switch ($action) {
             echo json_encode(['success' => false, 'message' => 'Poll not found']);
             exit;
         }
+
+        if ($userType === 'student' && $poll['class_id']) {
+            $stmt = $db->prepare("
+                SELECT id FROM class_enrollments
+                WHERE student_id = ? AND class_id = ? AND status = 'active'
+            ");
+            $stmt->execute([$userId, $poll['class_id']]);
+            if (!$stmt->fetchColumn()) {
+                echo json_encode(['success' => false, 'message' => 'Poll not found']);
+                exit;
+            }
+        }
         
         // Get options
         $stmt = $db->prepare("SELECT * FROM poll_options WHERE poll_id = ? ORDER BY id");
@@ -58,6 +70,19 @@ switch ($action) {
             $stmt = $db->prepare("SELECT option_id FROM poll_votes WHERE poll_id = ? AND user_id = ?");
             $stmt->execute([$id, $userId]);
             $votedOptions = $stmt->fetchAll(PDO::FETCH_COLUMN);
+        }
+
+        if ($userType === 'student' && !$hasVoted
+            && ($poll['status'] !== 'active' || ($poll['end_date'] && strtotime($poll['end_date']) <= time()))) {
+            echo json_encode(['success' => false, 'message' => 'This poll is closed']);
+            exit;
+        }
+
+        if ($userType === 'student' && !$hasVoted) {
+            foreach ($options as &$option) {
+                $option['votes'] = 0;
+            }
+            unset($option);
         }
         
         echo json_encode([
@@ -87,14 +112,29 @@ switch ($action) {
             exit;
         }
         
-        if (!$pollId || empty($optionIds)) {
+        if (!$pollId || !is_array($optionIds) || empty($optionIds)) {
             echo json_encode(['success' => false, 'message' => 'Invalid request']);
             exit;
         }
+
+        $validatedOptionIds = [];
+        foreach ($optionIds as $optionId) {
+            $validatedOptionId = filter_var($optionId, FILTER_VALIDATE_INT);
+            if ($validatedOptionId === false || $validatedOptionId < 1) {
+                echo json_encode(['success' => false, 'message' => 'Invalid poll option']);
+                exit;
+            }
+            $validatedOptionIds[] = $validatedOptionId;
+        }
+        $optionIds = array_values(array_unique($validatedOptionIds));
         
         // Check if poll exists and is active
         $studentBatchId = (int)(Authorization::getStudentBatchId() ?? 0);
-        $stmt = $db->prepare("SELECT * FROM polls WHERE id = ? AND batch_id = ? AND status = 'active'");
+        $stmt = $db->prepare("
+            SELECT * FROM polls
+            WHERE id = ? AND batch_id = ? AND status = 'active'
+              AND (end_date IS NULL OR end_date >= NOW())
+        ");
         $stmt->execute([$pollId, $studentBatchId]);
         $poll = $stmt->fetch();
         

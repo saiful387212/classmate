@@ -11,7 +11,7 @@ Auth::requireStudent();
 
 $pageTitle = 'Assignment Details';
 $pageCss = ['student.css', 'assignment-details.css'];
-$pageJs = ['assignment-details.js'];
+$pageJs = ['assignment-details.js', 'assignment-card-download.js'];
 $isStudent = true;
 
 $id = $_GET['id'] ?? 0;
@@ -161,9 +161,14 @@ include_once BASE_PATH . '/includes/header.php';
                     </span>
                 </div>
             </div>
-            <a href="<?php echo url('student/assignments.php'); ?>" class="btn btn-outline">
-                <i class="fas fa-arrow-left"></i> Back to Assignments
-            </a>
+            <div class="page-actions">
+                <button type="button" class="btn btn-secondary" data-download-assignment-card>
+                    <i class="fas fa-image"></i> Download Assignment Card
+                </button>
+                <a href="<?php echo url('student/assignments.php'); ?>" class="btn btn-outline">
+                    <i class="fas fa-arrow-left"></i> Back to Assignments
+                </a>
+            </div>
         </div>
     </div>
     
@@ -234,7 +239,8 @@ include_once BASE_PATH . '/includes/header.php';
             <div class="info-item full">
                 <label><i class="fas fa-paperclip"></i> Attachment</label>
                 <span>
-                    <a href="<?php echo uploadUrl($assignment['file_path']); ?>" class="btn btn-sm btn-info" target="_blank">
+                    <a href="<?php echo uploadUrl($assignment['file_path']); ?>" class="btn btn-sm btn-info"
+                       download="<?php echo htmlspecialchars($assignment['file_name'], ENT_QUOTES, 'UTF-8'); ?>">
                         <i class="fas fa-download"></i> <?php echo htmlspecialchars($assignment['file_name']); ?>
                     </a>
                 </span>
@@ -289,7 +295,7 @@ include_once BASE_PATH . '/includes/header.php';
                         <div class="detail-row">
                             <label>File:</label>
                             <span>
-                                <a href="<?php echo uploadUrl($submission['submission_file']); ?>" class="btn btn-sm btn-primary" target="_blank">
+                                <a href="<?php echo uploadUrl($submission['submission_file']); ?>" class="btn btn-sm btn-primary" download>
                                     <i class="fas fa-download"></i> Download File
                                 </a>
                             </span>

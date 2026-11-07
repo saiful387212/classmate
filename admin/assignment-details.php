@@ -11,7 +11,7 @@ Auth::requireAdmin();
 
 $pageTitle = 'Assignment Details';
 $pageCss = ['admin.css', 'assignment-details.css'];
-$pageJs = ['assignment-details.js'];
+$pageJs = ['assignment-details.js', 'assignment-card-download.js'];
 $isAdmin = true;
 
 $id = $_GET['id'] ?? 0;
@@ -97,6 +97,9 @@ include_once BASE_PATH . '/includes/sidebar-admin.php';
                 </div>
             </div>
             <div class="page-actions">
+                <button type="button" class="btn btn-secondary" data-download-assignment-card>
+                    <i class="fas fa-image"></i> Download Assignment Card
+                </button>
                 <a href="<?php echo url('admin/edit-assignment.php?id=' . $assignment['id']); ?>" class="btn btn-primary">
                     <i class="fas fa-edit"></i> Edit
                 </a>
@@ -158,7 +161,8 @@ include_once BASE_PATH . '/includes/sidebar-admin.php';
             <div class="info-item full">
                 <label><i class="fas fa-paperclip"></i> Attachment</label>
                 <span>
-                    <a href="<?php echo uploadUrl($assignment['file_path']); ?>" class="btn btn-sm btn-info" target="_blank">
+                    <a href="<?php echo uploadUrl($assignment['file_path']); ?>" class="btn btn-sm btn-info"
+                       download="<?php echo htmlspecialchars($assignment['file_name'], ENT_QUOTES, 'UTF-8'); ?>">
                         <i class="fas fa-download"></i> <?php echo htmlspecialchars($assignment['file_name']); ?>
                     </a>
                 </span>
@@ -250,7 +254,8 @@ include_once BASE_PATH . '/includes/sidebar-admin.php';
                                             </button>
                                         <?php endif; ?>
                                         <?php if ($submission['submission_file']): ?>
-                                            <a href="<?php echo uploadUrl($submission['submission_file']); ?>" class="btn btn-sm btn-primary" target="_blank">
+                                            <a href="<?php echo uploadUrl($submission['submission_file']); ?>" class="btn btn-sm btn-primary"
+                                               download title="Download submission file" aria-label="Download submission file">
                                                 <i class="fas fa-download"></i>
                                             </a>
                                         <?php endif; ?>
@@ -372,7 +377,7 @@ function viewSubmission(id) {
                         <div class="detail-row">
                             <label>File:</label>
                             <span>
-                                <a href="${sub.submission_file_url}" class="btn btn-sm btn-primary" target="_blank">
+                                <a href="${sub.submission_file_url}" class="btn btn-sm btn-primary" download>
                                     <i class="fas fa-download"></i> Download File
                                 </a>
                             </span>

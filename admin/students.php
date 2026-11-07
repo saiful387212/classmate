@@ -254,6 +254,9 @@ include_once BASE_PATH . '/includes/sidebar-admin.php';
                 <p class="text-muted">Manage all students in the system</p>
             </div>
             <div class="page-actions">
+                <a href="<?php echo url('admin/export-data.php?type=students'); ?>" class="btn btn-secondary">
+                    <i class="fas fa-file-csv"></i> Export Students CSV
+                </a>
                 <a href="<?php echo url('admin/registrations.php'); ?>" class="btn btn-warning">
                     <i class="fas fa-user-plus"></i> Pending Registrations
                     <?php if ($pendingCount > 0): ?>
