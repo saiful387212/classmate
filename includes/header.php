@@ -76,14 +76,15 @@
         <link rel="stylesheet" href="<?php echo asset('css/responsive.css') . '?v=' . APP_VERSION; ?>">
     
     <?php 
+    $pageAssetVersion = isset($pageAssetVersion) ? $pageAssetVersion : APP_VERSION;
     // Page specific CSS
     if (isset($pageCss)) {
         if (is_array($pageCss)) {
             foreach ($pageCss as $css) {
-                 echo '<link rel="stylesheet" href="' . asset('css/' . $css) . '?v=' . APP_VERSION . '">';
+                 echo '<link rel="stylesheet" href="' . asset('css/' . $css) . '?v=' . $pageAssetVersion . '">';
             }
         } else {
-              echo '<link rel="stylesheet" href="' . asset('css/' . $pageCss) . '?v=' . APP_VERSION . '">';
+              echo '<link rel="stylesheet" href="' . asset('css/' . $pageCss) . '?v=' . $pageAssetVersion . '">';
         }
     }
     

@@ -24,6 +24,8 @@ $student = $currentUser ?: [
 ];
 $todayClasses = [];
 $tomorrowClasses = [];
+$today = date('Y-m-d');
+$tomorrow = date('Y-m-d', strtotime('+1 day'));
 $upcomingClass = null;
 $currentClass = null;
 $completedClasses = [];
@@ -129,8 +131,6 @@ $loadRoutineClasses = static function (string $classDate) use ($db, $studentBatc
     return $classes;
 };
 
-$today = date('Y-m-d');
-$tomorrow = date('Y-m-d', strtotime('+1 day'));
 $todayClasses = $loadRoutineClasses($today);
 $tomorrowClasses = $loadRoutineClasses($tomorrow);
 

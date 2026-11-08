@@ -45,6 +45,7 @@ define('ASSETS_URL', BASE_URL . '/assets');
 define('UPLOAD_PATH', BASE_PATH . '/uploads');
 define('UPLOAD_URL', BASE_URL . '/uploads');
 define('UPLOAD_ASSIGNMENTS', UPLOAD_PATH . '/assignments');
+define('MEMORIES_STORAGE_PATH', dirname(BASE_PATH, 2) . DIRECTORY_SEPARATOR . 'classmate-private' . DIRECTORY_SEPARATOR . 'memories');
 
 // Database Configuration
 if ($isLocalEnvironment) {
@@ -92,6 +93,7 @@ require_once BASE_PATH . '/includes/Authorization.php';
 require_once BASE_PATH . '/includes/Validation.php';
 require_once BASE_PATH . '/includes/FileUpload.php';
 require_once BASE_PATH . '/includes/NotificationManager.php';
+require_once BASE_PATH . '/includes/MemoriesManager.php';
 
 // Initialize Session
 Session::init();

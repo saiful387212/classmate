@@ -28,6 +28,18 @@
                     <span>My Classes</span>
                 </a>
             </li>
+            <li class="nav-item <?php echo isActivePage('student/calendar.php') ? 'active' : ''; ?>">
+                <a href="<?php echo url('student/calendar.php'); ?>" class="nav-link">
+                    <i class="fas fa-calendar-days"></i>
+                    <span>Academic Calendar</span>
+                </a>
+            </li>
+            <li class="nav-item <?php echo isActivePage('memories.php') ? 'active' : ''; ?>">
+                <a href="<?php echo url('memories.php'); ?>" class="nav-link">
+                    <i class="fas fa-images"></i>
+                    <span>ClassMate Memories</span>
+                </a>
+            </li>
             
             <li class="nav-item <?php echo isActivePage('student/assignments.php') ? 'active' : ''; ?>">
                 <a href="<?php echo url('student/assignments.php'); ?>" class="nav-link">

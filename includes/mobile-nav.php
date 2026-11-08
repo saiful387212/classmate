@@ -19,6 +19,14 @@
                     <i class="fas fa-book"></i>
                     <span>Classes</span>
                 </a>
+                <a href="<?php echo url('admin/calendar.php'); ?>" class="mobile-nav-item <?php echo isActivePage('admin/calendar.php') ? 'active' : ''; ?>">
+                    <i class="fas fa-calendar-days"></i>
+                    <span>Calendar</span>
+                </a>
+                <a href="<?php echo url('memories.php'); ?>" class="mobile-nav-item <?php echo isActivePage('memories.php') ? 'active' : ''; ?>">
+                    <i class="fas fa-images"></i>
+                    <span>Memories</span>
+                </a>
                 <a href="<?php echo url('discussion.php?mode=batch-chat'); ?>" class="mobile-nav-item <?php echo isActivePage('discussion.php') && ($_GET['mode'] ?? '') === 'batch-chat' ? 'active' : ''; ?>">
                     <i class="fas fa-comments"></i>
                     <span>Chat</span>
@@ -35,6 +43,14 @@
                 <a href="<?php echo url('student/classes.php'); ?>" class="mobile-nav-item <?php echo isActivePage('student/classes.php') ? 'active' : ''; ?>">
                     <i class="fas fa-book"></i>
                     <span>Classes</span>
+                </a>
+                <a href="<?php echo url('student/calendar.php'); ?>" class="mobile-nav-item <?php echo isActivePage('student/calendar.php') ? 'active' : ''; ?>">
+                    <i class="fas fa-calendar-days"></i>
+                    <span>Calendar</span>
+                </a>
+                <a href="<?php echo url('memories.php'); ?>" class="mobile-nav-item <?php echo isActivePage('memories.php') ? 'active' : ''; ?>">
+                    <i class="fas fa-images"></i>
+                    <span>Memories</span>
                 </a>
                 <a href="<?php echo url('discussion.php?mode=batch-chat'); ?>" class="mobile-nav-item <?php echo isActivePage('discussion.php') && ($_GET['mode'] ?? '') === 'batch-chat' ? 'active' : ''; ?>">
                     <i class="fas fa-comments"></i>

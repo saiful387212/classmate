@@ -64,6 +64,18 @@
                     <span>Weekly Routine</span>
                 </a>
             </li>
+            <li class="nav-item <?php echo isActivePage('admin/calendar.php') ? 'active' : ''; ?>">
+                <a href="<?php echo url('admin/calendar.php'); ?>" class="nav-link">
+                    <i class="fas fa-calendar-days"></i>
+                    <span>Academic Calendar</span>
+                </a>
+            </li>
+            <li class="nav-item <?php echo isActivePage('memories.php') ? 'active' : ''; ?>">
+                <a href="<?php echo url('memories.php'); ?>" class="nav-link">
+                    <i class="fas fa-images"></i>
+                    <span>ClassMate Memories</span>
+                </a>
+            </li>
             
             <li class="nav-item <?php echo isActivePage('admin/assignments.php') ? 'active' : ''; ?>">
                 <a href="<?php echo url('admin/assignments.php'); ?>" class="nav-link">

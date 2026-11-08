@@ -86,22 +86,51 @@ try {
                 }
 
                 [$routineBatchSql, $routineBatchParams] = Authorization::adminBatchFilter('cr');
-                $stmt = $db->prepare("SELECT cr.day_of_week FROM class_routines cr WHERE cr.id = ?" . $routineBatchSql);
+                $stmt = $db->prepare("
+                    SELECT cr.day_of_week, cr.batch_id, cr.class_title, cr.start_time, c.course_code
+                    FROM class_routines cr
+                    JOIN courses c ON c.id = cr.course_id
+                    WHERE cr.id = ?" . $routineBatchSql
+                );
                 $stmt->execute(array_merge([$routineId], $routineBatchParams));
-                $routineDay = $stmt->fetchColumn();
-                if (!$routineDay) {
+                $routine = $stmt->fetch();
+                if (!$routine) {
                     throw new RuntimeException('Routine class not found or you do not have permission to manage it.');
                 }
-                if ($date->format('l') !== $routineDay) {
+                if ($date->format('l') !== $routine['day_of_week']) {
                     throw new RuntimeException('The selected date must match this routine class day.');
                 }
 
+                $previousStmt = $db->prepare("
+                    SELECT status FROM class_routine_occurrences
+                    WHERE routine_id = ? AND class_date = ?
+                ");
+                $previousStmt->execute([$routineId, $classDate]);
+                $previousStatus = $previousStmt->fetchColumn();
                 $stmt = $db->prepare("
                     INSERT INTO class_routine_occurrences (routine_id, class_date, status, updated_by)
                     VALUES (?, ?, ?, ?)
                     ON DUPLICATE KEY UPDATE status = VALUES(status), updated_by = VALUES(updated_by)
                 ");
                 $stmt->execute([$routineId, $classDate, $status, Session::get('user_id')]);
+
+                if ($previousStatus !== $status && in_array($status, ['cancelled', 'scheduled'], true)) {
+                    $notifier = new NotificationManager();
+                    $classLabel = trim(($routine['course_code'] ? $routine['course_code'] . ' · ' : '') . $routine['class_title']);
+                    $cancelled = $status === 'cancelled';
+                    $noticeTitle = $cancelled ? 'Class cancelled' : 'Class schedule updated';
+                    $noticeMessage = $cancelled
+                        ? $classLabel . ' on ' . date('d M Y', strtotime($classDate)) . ' has been cancelled.'
+                        : $classLabel . ' is scheduled for ' . date('d M Y', strtotime($classDate))
+                            . ' at ' . date('h:i A', strtotime($routine['start_time'])) . '.';
+                    $notifier->notifyBatchStudents(
+                        (int)$routine['batch_id'],
+                        $noticeTitle,
+                        $noticeMessage,
+                        $cancelled ? 'warning' : 'info',
+                        url('student/calendar.php')
+                    );
+                }
 
                 Session::setFlash('success', 'Class occurrence status updated.');
                 header("Location: " . url('admin/routine.php'));

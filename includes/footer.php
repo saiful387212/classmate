@@ -28,10 +28,10 @@
 if (isset($pageJs)) {
     if (is_array($pageJs)) {
         foreach ($pageJs as $js) {
-            echo '<script src="' . asset('js/' . $js) . '?v=' . APP_VERSION . '"></script>';
+            echo '<script src="' . asset('js/' . $js) . '?v=' . (isset($pageAssetVersion) ? $pageAssetVersion : APP_VERSION) . '"></script>';
         }
     } else {
-        echo '<script src="' . asset('js/' . $pageJs) . '"></script>';
+        echo '<script src="' . asset('js/' . $pageJs) . '?v=' . (isset($pageAssetVersion) ? $pageAssetVersion : APP_VERSION) . '"></script>';
     }
 }
 
